@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import gzip
 import json
 import os
 import re
@@ -113,28 +114,63 @@ def probe_assets(spec):
     return results
 
 
+def record_oasis_integrity(part, ledger_path, asset):
+    if not asset.get("bytes") or Path(part).stat().st_size != asset["bytes"]:
+        raise ValueError("OASIS archive must match the official HEAD byte size")
+    # Exhaust every gzip member to verify CRC32 and uncompressed-size trailers.
+    with gzip.open(part, "rb") as stream:
+        for _ in iter(lambda: stream.read(4 * 1024**2), b""):
+            pass
+    atomic_json(ledger_path, {"source_url": asset["url"], "bytes": asset["bytes"], "sha256": digest(part),
+                             "gzip_crc32": "passed", "publisher_cryptographic_checksum": None,
+                             "limitation": "Local SHA-256 is a repeat-use integrity baseline, not a publisher hash comparison"})
+
+
 def download_verified(asset, root, *, max_bytes):
     """Resume only with a server validator and matching Content-Range; never trust ETag as MD5."""
     target = checked_path(root, asset["path"])
-    algorithm, expected = asset["checksum"].split(":", 1)
+    checksum = asset.get("checksum")
+    # This legacy publisher supplies no cryptographic digest. Keep this weaker,
+    # explicit policy restricted to its two authenticated HTTPS archive URLs.
+    legacy_oasis = asset.get("integrity_policy") == "https_size_gzip_crc32_local_sha256"
+    if legacy_oasis and asset["url"] not in {
+        "https://download.nrg.wustl.edu/data/OAS2_RAW_PART1.tar.gz",
+        "https://download.nrg.wustl.edu/data/OAS2_RAW_PART2.tar.gz",
+    }:
+        raise ValueError("Legacy integrity policy is restricted to the two official OASIS-2 archives")
+    if checksum:
+        algorithm, expected = checksum.split(":", 1)
+    elif legacy_oasis:
+        algorithm, expected = "sha256", None
+    else:
+        raise ValueError("Missing publisher checksum; no explicit authorized alternative integrity policy")
     expected_size = asset.get("bytes")
     length = {"md5": 32, "sha256": 64}.get(algorithm)
-    if length is None or not re.fullmatch(r"[0-9a-f]{" + str(length) + r"}", expected):
+    if length is None or (expected is not None and not re.fullmatch(r"[0-9a-f]{" + str(length) + r"}", expected)):
         raise ValueError("Missing/invalid publisher checksum")
+    ledger_path = target.with_name(target.name + ".integrity.json")
     if target.exists():
-        if (expected_size is None or target.stat().st_size == expected_size) and digest(target, algorithm) == expected:
+        previous = json.loads(ledger_path.read_text()) if legacy_oasis and ledger_path.exists() else {}
+        reference = expected or (previous.get("sha256") if previous.get("source_url") == asset["url"] else None)
+        if reference and (expected_size is None or target.stat().st_size == expected_size) and digest(target, algorithm) == reference:
             return {"path": str(target), "sha256": digest(target), "status": "verified_existing"}
         raise FileExistsError(f"Existing file differs from publisher checksum; preserve and inspect: {target}")
     target.parent.mkdir(parents=True, exist_ok=True)
     part = target.with_name(target.name + ".part")
     state_path = target.with_name(target.name + ".resume.json")
-    if part.exists() and (expected_size is None or part.stat().st_size == expected_size) and digest(part, algorithm) == expected:
+    if expected is not None and part.exists() and (expected_size is None or part.stat().st_size == expected_size) and digest(part, algorithm) == expected:
         part.replace(target)
         state_path.unlink(missing_ok=True)
         return {"path": str(target), "sha256": digest(target), "status": "verified_completed_partial"}
     state = json.loads(state_path.read_text()) if state_path.exists() else {}
     headers = {}
     offset = part.stat().st_size if part.exists() else 0
+    if legacy_oasis and offset == expected_size and state.get("url") == asset["url"]:
+        record_oasis_integrity(part, ledger_path, asset)
+        part.replace(target)
+        state_path.unlink(missing_ok=True)
+        return {"path": str(target), "sha256": digest(target), "publisher_checksum": None,
+                "integrity_policy": asset["integrity_policy"], "status": "verified_completed_partial"}
     validator = state.get("validator") if state.get("url") == asset["url"] else None
     if offset and validator:
         headers = {"Range": f"bytes={offset}-", "If-Range": validator}
@@ -180,11 +216,14 @@ def download_verified(asset, root, *, max_bytes):
         for size in (total, expected_size):
             if size is not None and count != size:
                 raise ValueError(f"Incomplete download: {count} != {size}")
-    if digest(part, algorithm) != expected:
+    if expected is not None and digest(part, algorithm) != expected:
         raise ValueError(f"Publisher {algorithm} mismatch; file kept as .part for investigation")
+    if legacy_oasis:
+        record_oasis_integrity(part, ledger_path, asset)
     part.replace(target)
     state_path.unlink(missing_ok=True)
-    return {"path": str(target), "bytes": count, "publisher_checksum": asset["checksum"], "sha256": digest(target), "status": "verified"}
+    return {"path": str(target), "bytes": count, "publisher_checksum": checksum, "sha256": digest(target),
+            "integrity_policy": asset.get("integrity_policy", "publisher_checksum"), "status": "verified"}
 
 
 def safe_extract(archive, destination, *, max_unpacked_bytes):
@@ -256,21 +295,100 @@ def safe_extract(archive, destination, *, max_unpacked_bytes):
         container.close()
 
 
-def inspect_dataset(root, dataset_id, disease):
+def load_patient_map(path):
+    """Explicit reviewed file-to-patient mapping; never infer diagnosis from a mask."""
+    required = {"relative_path", "patient_id", "diagnosis", "modality", "role", "visit_id"}
+    allowed_diagnoses = {"meningioma", "brain_lesion_negative_lung_cancer", "AD_clinical_baseline", "control_stable", "converter_excluded"}
+    rows = {}
+    with Path(path).open(newline="") as stream:
+        reader = csv.DictReader(stream)
+        if not required.issubset(reader.fieldnames or []):
+            raise ValueError(f"Patient map must contain {sorted(required)}")
+        for row in reader:
+            relative = row["relative_path"]
+            if relative in rows:
+                raise ValueError(f"Duplicate patient-map path: {relative}")
+            if any(not row[k].strip() for k in required):
+                raise ValueError(f"Incomplete reviewed identity/label mapping: {relative}")
+            if row["diagnosis"] not in allowed_diagnoses or row["role"] not in {"image", "mask"}:
+                raise ValueError(f"Unrecognized source diagnosis/role: {relative}")
+            rows[relative] = row
+    return rows
+
+
+def source_identity(relative, dataset_id, patient_map=None):
+    """Interpret only publisher-documented conventions; unknown identity stays unknown."""
+    path = PurePosixPath(relative)
+    if dataset_id == "oasis2_legacy":
+        match = re.search(r"OAS2_\d{4}", relative, re.I)
+        visit = re.search(r"MR\d+", relative, re.I)
+        if not match or not visit:
+            raise ValueError("Cannot establish OASIS-2 patient and visit from documented identifiers")
+        mapping = (patient_map or {}).get(relative)
+        if mapping and (mapping["patient_id"] != match[0].upper() or mapping["diagnosis"] not in {"AD_clinical_baseline", "control_stable", "converter_excluded"}):
+            raise ValueError("OASIS patient map must preserve source identity and use explicit clinical cohort groups")
+        if mapping and (mapping["role"] != "image" or mapping["modality"] != "T1w"):
+            raise ValueError("OASIS-2 source contains T1w images, not tumor masks or other sequences")
+        return {"patient": match[0].upper(), "role": "image", "modalities": ["T1w"],
+                "visit_id": visit[0].upper(), "diagnosis": mapping["diagnosis"] if mapping else None,
+                "diagnosis_source": "OASIS-2 clinical cohort, doi:10.1162/jocn.2009.21407; reviewed clinical mapping required; never infer AD from missing data or generic CDR/MCI"}
+    if dataset_id == "proteas_23171182":
+        match = re.search(r"(?:^|/)(P\d{2}[ab]?)(?:/|_)", relative)
+        if not match or not 1 <= int(match[1][1:3]) <= 40:
+            raise ValueError("Cannot establish PROTEAS patient from the published P01-P40 layout")
+        source_case = match[1]
+        patient = source_case[:3]  # a/b are separate treatment courses, not new patients.
+        visit_match = re.search(r"(?:^|[/_])(baseline|fu\d+)(?:[/_.]|$)", relative, re.I)
+        visit = visit_match[1].lower() if visit_match else "unspecified"
+        name = path.name.lower()
+        if name in {"t1.nii.gz", "t2.nii.gz", "t1c.nii.gz", "fla.nii.gz"} and "brats" in {p.lower() for p in path.parts}:
+            role = "image"
+            modality = {"t1.nii.gz": "T1w", "t2.nii.gz": "T2w", "t1c.nii.gz": "T1ce", "fla.nii.gz": "FLAIR"}[name]
+        elif "_tumor_mask_" in name:
+            role, modality = "mask", "tumor_edema_necrosis"
+        elif "_brain_mask" in name:
+            role, modality = "ancillary", "brain_tissue_labels"
+        elif name.endswith("_ct.nii.gz"):
+            role, modality = "ancillary", "CT"
+        elif name.endswith("_rtp.nii.gz"):
+            role, modality = "ancillary", "radiotherapy_plan"
+        else:
+            raise ValueError(f"Undocumented PROTEAS NIfTI file; review rather than assume MRI: {relative}")
+        return {"patient": patient, "source_case": source_case, "visit_id": visit,
+                "role": role, "modalities": [modality], "diagnosis": "brain_metastasis",
+                "diagnosis_source": "Flouri et al. confirmed-BM cohort, doi:10.1038/s41597-025-06131-0"}
+    if dataset_id == "hwang_meningioma_5945963":
+        mapping = (patient_map or {}).get(relative)
+        if not mapping:
+            return {"patient": None, "role": "unresolved", "modalities": ["unresolved"],
+                    "diagnosis": None, "visit_id": None,
+                    "diagnosis_source": "Explicit source identity/diagnosis map required; absence of a mask is not a control label"}
+        if mapping["diagnosis"] not in {"meningioma", "brain_lesion_negative_lung_cancer"}:
+            raise ValueError("Hwang cohort requires meningioma or its source-specific lesion-negative control label")
+        return {"patient": mapping["patient_id"], "role": mapping["role"], "modalities": [mapping["modality"]],
+                "diagnosis": mapping["diagnosis"], "visit_id": mapping["visit_id"],
+                "diagnosis_source": "Reviewed source patient map; Hwang et al. doi:10.3390/jimaging8120327"}
+    return None
+
+
+def inspect_dataset(root, dataset_id, disease, patient_map=None):
     """CPU headers only; one file at a time, no full volume load or GPU preprocessing."""
     import nibabel as nib
     rows, errors = [], []
     for path in sorted(Path(root).rglob("*")):
         if any(p.startswith(".") or p == "__MACOSX" for p in path.relative_to(root).parts):
             continue
-        if not path.is_file() or not path.name.endswith((".nii", ".nii.gz")):
+        if not path.is_file() or not path.name.endswith((".nii", ".nii.gz", ".img", ".img.gz")):
             continue
         relative = path.relative_to(root).as_posix()
         try:
             image = nib.load(path)
             if len(image.shape) < 3 or min(image.shape[:3]) < 2:
                 raise ValueError(f"Not a 3D MRI/mask: {image.shape}")
-            if dataset_id == "msd_task01":
+            identity = source_identity(relative, dataset_id, patient_map)
+            if identity is not None:
+                patient, role, modality = identity["patient"], identity["role"], identity["modalities"]
+            elif dataset_id == "msd_task01":
                 match = re.search(r"BRATS_\d+", path.name)
                 patient = match[0] if match else None
                 modality = ["FLAIR", "T1w", "T1ce", "T2w"] if len(image.shape) == 4 else ["mask"]
@@ -285,25 +403,35 @@ def inspect_dataset(root, dataset_id, disease):
                 patient = match[0] if match else None
                 role = "mask" if "_msk" in path.name else "image"
                 modality = [next((m for m in ["FLAIR", "ADC", "dwi"] if m.lower() in path.name.lower()), "mask" if role == "mask" else "unknown")]
-            if not patient:
+            if not patient and dataset_id != "hwang_meningioma_5945963":
                 raise ValueError("Cannot establish patient/case identity from the documented layout")
             zooms = [float(v) for v in image.header.get_zooms()[:3]]
             if any(not (0 < z < 100) for z in zooms):
                 raise ValueError(f"Invalid voxel spacing: {zooms}")
-            rows.append({"dataset_id": dataset_id, "patient_id": f"{dataset_id}:{patient}", "case_id": patient,
+            header = image.file_map.get("header")
+            paired_header_hash = digest(header.filename) if header and header.filename else None
+            rows.append({"dataset_id": dataset_id, "patient_id": f"{dataset_id}:{patient}" if patient else None, "case_id": patient,
                          "disease": disease, "role": role, "modalities": modality, "relative_path": relative,
                          "shape": list(image.shape), "spacing_mm": zooms, "dtype": str(image.get_data_dtype()),
                          "affine": image.affine.tolist(), "bytes": path.stat().st_size,
-                         "sha256": digest(path), "diagnosis_source": "dataset-level cohort; review clinical metadata before training",
-                         "split_group": f"{dataset_id}:{patient}", "split": "unassigned"})
+                         "paired_header_sha256": paired_header_hash,
+                         "sha256": digest(path), "diagnosis_source": identity["diagnosis_source"] if identity else "dataset-level cohort; review clinical metadata before training",
+                         "diagnosis": identity["diagnosis"] if identity else disease,
+                         "visit_id": identity.get("visit_id") if identity else None,
+                         "source_case": identity.get("source_case") if identity else None,
+                         "split_group": f"{dataset_id}:{patient}" if patient else None, "split": "unassigned"})
         except Exception as exc:
             errors.append({"path": relative, "error": f"{type(exc).__name__}: {exc}"})
     if not rows:
         errors.append({"error": "No valid 3D NIfTI files found"})
     groups = {}
     for row in rows:
-        g = groups.setdefault(row["patient_id"], {"patient_id": row["patient_id"], "images": [], "masks": [], "split": "unassigned"})
-        g["masks" if row["role"] == "mask" else "images"].append(row["relative_path"])
+        if row["patient_id"] is None:
+            continue
+        g = groups.setdefault(row["patient_id"], {"patient_id": row["patient_id"], "diagnosis": row["diagnosis"], "images": [], "masks": [], "ancillary": [], "split": "unassigned"})
+        if g["diagnosis"] != row["diagnosis"]:
+            errors.append({"error": f"Conflicting diagnoses for {row['patient_id']}"})
+        g[{"image": "images", "mask": "masks"}.get(row["role"], "ancillary")].append(row["relative_path"])
     if any(not g["images"] for g in groups.values()):
         errors.append({"error": "Mask-only patient/case group found"})
     hashes = {}
@@ -311,12 +439,14 @@ def inspect_dataset(root, dataset_id, disease):
         if row["role"] == "image":
             hashes.setdefault(row["sha256"], set()).add(row["patient_id"])
     duplicates = [sorted(v) for v in hashes.values() if len(v) > 1]
+    pending = [row["relative_path"] for row in rows if row["patient_id"] is None or row["diagnosis"] is None]
     return {"files": rows, "patients": list(groups.values()), "errors": errors,
-            "exact_duplicate_image_groups": duplicates, "patient_count": len(groups),
+            "pending_identity_files": pending, "mapping_required": bool(pending),
+            "exact_duplicate_image_groups": duplicates, "patient_count": None if any(row["patient_id"] is None for row in rows) else len(groups),
             "count_note": "MSD IDs are case groups; independent clinical identity is not proven. No cross-release deduplication is claimed."}
 
 
-def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_bytes):
+def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_bytes, patient_map_path=None):
     root = assert_colab_drive(destination)
     if not spec.get("eligible"):
         raise RuntimeError(f"{spec['disease']}: acquisition disabled: {spec['reason']}")
@@ -329,12 +459,16 @@ def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_b
             raise OSError("Selected assets exceed the total download budget")
         require_space(root, known_total)
         used = 0
+        unpacked = 0
         for asset in spec["assets"]:
             result = download_verified(asset, root / "downloads", max_bytes=download_budget_bytes - used)
             report["assets"].append(result)
             used += Path(result["path"]).stat().st_size
             if asset.get("archive"):
-                report.setdefault("extraction", []).append(safe_extract(result["path"], root / "data", max_unpacked_bytes=extraction_budget_bytes))
+                data_destination = checked_path(root / "data", asset["extract_subdir"]) if asset.get("extract_subdir") else root / "data"
+                extraction = safe_extract(result["path"], data_destination, max_unpacked_bytes=extraction_budget_bytes - unpacked)
+                unpacked += extraction["unpacked_bytes"]
+                report.setdefault("extraction", []).append(extraction)
         data_root = root / ("data" if any(a.get("archive") for a in spec["assets"]) else "downloads")
         if spec["id"] == "msd_task01":
             descriptions = list(data_root.rglob("dataset.json"))
@@ -344,12 +478,41 @@ def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_b
             license_text = str(description.get("licence", description.get("license", ""))).lower()
             if not ("cc-by-sa" in license_text or "by-sa/4.0" in license_text):
                 raise ValueError(f"Unexpected MSD license declaration: {license_text!r}; review before reuse")
-        manifest = inspect_dataset(data_root, spec["id"], spec["disease"])
+        if patient_map_path:
+            assert_colab_drive(Path(patient_map_path).parent)
+        patient_map = load_patient_map(patient_map_path) if patient_map_path else None
+        manifest = inspect_dataset(data_root, spec["id"], spec["disease"], patient_map=patient_map)
         atomic_json(root / "file_manifest.json", manifest)
         atomic_json(root / "patient_manifest.json", manifest["patients"])
+        if manifest["errors"]:
+            raise ValueError("NIfTI/identity inspection failed; review file_manifest.json")
+        expected = spec.get("expected_groups")
+        if expected and manifest["patient_count"] is not None and manifest["patient_count"] != expected:
+            raise ValueError(f"Expected {expected} patient/case groups; found {manifest['patient_count']}")
+        if manifest["mapping_required"]:
+            # No invented patient IDs or disease/control labels for undocumented filenames.
+            template = root / "patient_map_template.csv"
+            if not template.exists():
+                with template.open("x", newline="") as stream:
+                    writer = csv.DictWriter(stream, fieldnames=["relative_path", "patient_id", "diagnosis", "modality", "role", "visit_id"])
+                    writer.writeheader()
+                    for row in manifest["files"]:
+                        if row["relative_path"] in manifest["pending_identity_files"]:
+                            writer.writerow({"relative_path": row["relative_path"], "patient_id": row["case_id"] or "",
+                                             "diagnosis": row["diagnosis"] or "", "modality": row["modalities"][0] if row["role"] != "unresolved" else "",
+                                             "role": row["role"] if row["role"] != "unresolved" else "", "visit_id": row["visit_id"] or ""})
+            report["status"] = "download_verified_inventory_pending_patient_map"
+            report["patient_or_case_groups"] = manifest["patient_count"]
+            report["mapping_template"] = str(template)
+            report["limitation"] = "Identity and/or diagnostic-label review is incomplete. Review source identities, repeated visits and disease/control labels; fill a separate reviewed CSV and rerun. No training is authorized."
+            return report
         expected = spec.get("expected_groups")
         if expected and manifest["patient_count"] != expected:
             raise ValueError(f"Expected {expected} patient/case groups; found {manifest['patient_count']}")
+        for diagnosis, count in spec.get("expected_diagnosis_groups", {}).items():
+            actual = sum(p["diagnosis"] == diagnosis for p in manifest["patients"])
+            if actual != count:
+                raise ValueError(f"Expected {count} independent groups for {diagnosis}; found {actual}")
         minimum_masks = spec.get("expected_min_masks", 0)
         if sum(row["role"] == "mask" for row in manifest["files"]) < minimum_masks:
             raise ValueError(f"Expected at least {minimum_masks} lesion masks")

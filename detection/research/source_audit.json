@@ -84,5 +84,149 @@
     "response_sha256": "9f1c3fa50ee5e4ac161ee0bffe29768e68dabe6b586f3ce9f1a582de358157f2",
     "observation": "412 patients / 560 exams in full cohort; 461 advertised public exams; Download requires reCAPTCHA. No challenge bypass, consent acceptance or MRI transfer.",
     "payload_downloaded": false
+  },
+  {
+    "source": "PROTEAS requested older record",
+    "url": "https://zenodo.org/api/records/17253793",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "3ab9bd129aeb7b4aee6e3d8183aa7d821bfa2c839d407d8d6afd26e2148845ac",
+    "observation": "Open CC BY 4.0; historical version, not independent cohort",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "PROTEAS latest-version resolution",
+    "url": "https://zenodo.org/api/records/17253793/versions/latest",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "8f1cd8e5df974bd795766798a7a2d73cb1aeb0f4d734865b1d3854a2c15c7087",
+    "observation": "Resolves to 23171182, published 2026-10-05; six ZIPs and clinical XLSX changed",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "PROTEAS pinned current record",
+    "url": "https://zenodo.org/api/records/23171182",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "8f1cd8e5df974bd795766798a7a2d73cb1aeb0f4d734865b1d3854a2c15c7087",
+    "observation": "40 patients; 45 course ZIPs plus selected clinical XLSX; publisher MD5s retained",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "PROTEAS descriptor XML",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12630624/fullTextXML",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "c7372dbb269bd9290f377015a2e4b7f39ccb0f3e833337e3777db05009476bc5",
+    "observation": "Patient/course identifiers, visits, four MRI filenames, CT/RTP ancillary files and segmentation labels",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "PROTEAS clinical spreadsheet metadata only",
+    "url": "https://zenodo.org/api/records/23171182/files/PROTEAS-Clinical_and_demographic_data.xlsx/content",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "24bcef3cec078f5e9e4c11e7f3ac735bae06f56a24a776b8d7de4f5fba537fcd",
+    "observation": "Publisher MD5 verified; headers and anonymized ID structure checked; no clinical rows committed",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "Hwang/SNUBH current author record",
+    "url": "https://zenodo.org/api/records/5945963",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "cf928fda549758f1f04cd2216deae00231c1ed74e06eefba6b378c7b31c2e618",
+    "observation": "Open CC BY 4.0, Nii_data.tar.gz size and MD5, latest release unchanged",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "Hwang/SNUBH data descriptor",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9782766/fullTextXML",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "0836941ae831848025f7d514bdb8b6bc74ceb2703398d9e6a877eb154794925c",
+    "observation": "91 meningioma patients, 171 scans, four-sequence protocol and radiologist masks; released file linkage awaits Colab inventory",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "Hwang/SNUBH publication supplement",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9782766/supplementaryFiles",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "c65d71f0517e386a161904177e0fa1b4425793edf65627f34b2844abd4965f35",
+    "observation": "Table S2 broader anatomic coverage; Table S1 says 12 controls versus 10 in main article. Publication material, not MRI volume data.",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "Authorized OASIS usage terms and cohort summary",
+    "url": "https://www.nitrc.org/projects/oasis/",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "2a8f2282362df85aae934d5dfb8cffcffccec85782a0343b0a2b8dc5de3f44da",
+    "observation": "Maintainer resource with custom OASIS terms, scientific-use permissions and OASIS-1/2 descriptions",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "Official OASIS direct-access exception",
+    "url": "https://raw.githubusercontent.com/NrgXnat/oasis-scripts/master/README.md",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "539876fb66780834266a4fb33a881c40a9c6fabe15d934329d1a22cc07071680",
+    "observation": "Maintainer README distinguishes direct OASIS1/2 downloads from signed-DUA/project access for later releases",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "Official legacy raw archive directory",
+    "url": "https://download.nrg.wustl.edu/data/",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "3341614618c116981852447864a7dd80b0904dd65acf48b8154bb7a3837ba193",
+    "observation": "Lists two OAS2 raw archives. No publisher cryptographic checksums provided.",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "OASIS-2 clinical descriptor",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2895005/",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "df3d71096a1bbd1b5eb6d9f59ee38e6f430701d2abd86acf52b402192b237ed6",
+    "observation": "150 independent people: 64 baseline clinical AD, 72 stable controls, 14 converters; 373 sessions; cohort-specific AD diagnosis",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "MIRIAD authorized terms",
+    "url": "https://www.nitrc.org/projects/miriad/",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "cf6619a8c4dddb6c80bea464833a93e6490dc3fe79d2437f904a895feabd7e83",
+    "observation": "Agreement says by registering/downloading; redistribution requires prior agreement; no anonymous official package selected",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "MIRIAD clinical descriptor",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3809512/fullTextXML",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "81a7ffa24e9b4c03259238f94c2789580fe3d3a2d1568d8a7ed744666ef6b6be",
+    "observation": "46 AD and 23 controls, 708 T1 scans; clinically relevant but no verified no-registration transfer",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "Restricted dementia JPG candidate",
+    "url": "https://zenodo.org/api/records/20426271",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "0f47ea1a176a5ddcf8b8c8e0ccff451c9f733b68aead9dde70c655445adf31eb",
+    "observation": "Restricted, JPG image counts not independently identified 3D AD patients",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "Derived-connectivity AD candidate",
+    "url": "https://zenodo.org/api/records/8113922",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "bbf3888e014eb1eec48565736d4560f050d280dd0136e2ccd9ff0cf3fb8da966",
+    "observation": "Restricted derived connectivity matrices, not a clinical whole-brain MRI transfer",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "Mixed MCI/AD publication candidate",
+    "url": "https://zenodo.org/api/records/1247911",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "48fd20ee5435ed5e22bcf45338f3a1022b2c7e9191fcaea89b45755087a54ffa",
+    "observation": "PDF only; mixed aMCI/AD group cannot be relabeled all AD",
+    "mri_payload_downloaded": false
+  },
+  {
+    "source": "Dryad research search metadata",
+    "url": "https://datadryad.org/api/v2/search?q=Alzheimer+MRI&per_page=20",
+    "retrieved_on": "2026-10-22",
+    "response_sha256": "00e621ff6bb85cbae6a9ca367608e7a930cc28a27cec342df1b9541f325fe6a4",
+    "observation": "Additional reputable repository searched; no additional fully verified clinical MRI transfer selected",
+    "mri_payload_downloaded": false
   }
 ]

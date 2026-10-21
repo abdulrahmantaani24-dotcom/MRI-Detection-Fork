@@ -23,9 +23,15 @@ Keep datasets and checkpoints outside the Git checkout, in private Drive storage
 Use [Acquire_Best_5_Disease_Datasets.ipynb](notebooks/Acquire_Best_5_Disease_Datasets.ipynb)
 for opt-in, checksum-verified acquisition into private Google Drive **from Colab only**.
 It reuses this setup notebook's runtime/dependency/Drive cells. All five disease switches
-default off; three choices are prepared, while brain metastasis and Alzheimer's remain
-disabled pending verified qualifying access. Existing IXI files are not scanned or changed.
+default off. The updated choices include PROTEAS brain metastasis, a larger 91-patient
+meningioma cohort, and official legacy OASIS-2; the original 37-patient meningioma option
+is retained. Download readiness is separate from clinical-label readiness: the larger
+meningioma and OASIS-2 choices need reviewed mapping, and OASIS-2 has no publisher
+cryptographic digest (its explicit policy uses HTTPS/size/gzip CRC32 and a local SHA-256
+ledger). Existing IXI files are not scanned or changed.
 
 Read the [dataset comparison and evidence](research/DATASET_SELECTION.md) before selecting
 downloads. No training is included. The helper's offline safety tests use artificial data:
 `python -m unittest -v detection.test_acquisition` from the repository root.
+After editing the helpers/catalog, refresh the embedded notebook with
+`python detection/sync_acquisition_notebook.py`; this performs no network or MRI I/O.

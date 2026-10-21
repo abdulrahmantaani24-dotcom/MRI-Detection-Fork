@@ -1,101 +1,126 @@
-# NeuroScope AI: disease dataset selection
+# NeuroScope AI: five-disease acquisition comparison
 
-Research date: **2026-10-21**. Scope: clinical 3D brain MRI acquisition for later disease detection; no training. Free access must mean an actual authorized data transfer without registration or case-by-case approval, not merely a public paper, metadata page, or model checkpoint. Licenses below apply to data unless explicitly stated otherwise.
+Updated **2026-10-22**; continues the October 21 research and draft PR. The notebook prepares downloads in **Google Colab/private Drive only**. No MRI dataset was downloaded, no MRI preprocessing experiment was run, and no model was trained in Codex. Scientific papers, publication supplements and non-image source metadata were inspected for research.
 
-**Three acquisition choices are prepared. Brain metastasis and Alzheimer's remain unresolved under the required verification standard.** This is not a claim that a qualifying dataset cannot exist. Their download switches deliberately fail with the reason rather than silently substituting unverified data.
+Brain metastasis now has an author-authorized direct source. A larger meningioma source is preferred, with the original 37-patient option retained. OASIS-2 has a verified official direct-download route and clinical cohort definitions, but a weaker integrity policy and a clinical-label join that must remain explicit. **Download readiness, publisher-hash verification, completed patient manifests and training readiness are different states.**
 
-## Prepared choices and verified direct links
+## Updated comparison and download readiness
 
-| Disease | Choice | Patient/case count | Download bytes | License and citation |
-|---|---|---|---|---|
-| Glioma | [MSD Task01 BrainTumour](https://medicaldecathlon.com/), via [MONAI-authorized direct TAR](https://msd-for-monai.s3-us-west-2.amazonaws.com/Task01_BrainTumour.tar) | 750 4D **case volumes**, including 484 annotated cases and 266 without public masks. Independent clinical identities not independently established here. | **7,608,266,240** (7.61 GB / 7.09 GiB) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), explicitly stated on the official MSD site. Antonelli et al., *The Medical Segmentation Decathlon*, [doi:10.1038/s41467-022-30695-9](https://doi.org/10.1038/s41467-022-30695-9); also cite source BraTS publications. |
-| Meningioma | [OpenNeuro ds007345 v1.0.0](https://openneuro.org/datasets/ds007345/versions/1.0.0): baseline structural MRI plus available tumor/edema masks | **37 independent baseline participants**, **179** selected image/mask files. Postoperative folders are repeat visits and are excluded. | **4,407,701,072** (4.41 GB / 4.10 GiB) for the selected subset | **CC0**, confirmed in the publisher's pinned [dataset_description.json](https://raw.githubusercontent.com/OpenNeuroDatasets/ds007345/fd052d49bfa51677fca817efdb68f237eeda9774/dataset_description.json). Filimonova et al., *Multimodal Brain MRI and Clinical Data in Olfactory Groove Meningioma*, [doi:10.18112/openneuro.ds007345.v1.0.0](https://doi.org/10.18112/openneuro.ds007345.v1.0.0). |
-| Post-stroke lesions | [ISLES 2022 public training release](https://zenodo.org/records/7153326), [direct ZIP](https://zenodo.org/api/records/7153326/files/ISLES-2022.zip/content) | **250** expert-annotated stroke cases/patients from three centers. Do not report the full 400-case challenge as 400 downloadable annotated cases. | **1,692,717,470** (1.69 GB / 1.58 GiB) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), open access in the official [Zenodo API record](https://zenodo.org/api/records/7153326). Hernandez Petzsche et al., *Scientific Data* 9, 762 (2022), [doi:10.1038/s41597-022-01875-5](https://doi.org/10.1038/s41597-022-01875-5); dataset DOI 10.5281/zenodo.7153326. |
+| Disease | Prepared source | Independent people versus scans | Compressed download | Data permission | What is ready for Colab? |
+|---|---|---|---|---|---|
+| Glioma | [MSD Task01](https://medicaldecathlon.com/), [direct TAR](https://msd-for-monai.s3-us-west-2.amazonaws.com/Task01_BrainTumour.tar) | 750 case volumes: 484 annotated, 266 without public masks. Independent clinical identity across cases/releases is not independently proven. | **7,608,266,240 bytes / 7.61 GB** | **CC BY-SA 4.0**, official MSD site | Download with publisher MD5; documented case-ID inventory. BraTS overlap still needs review. |
+| Meningioma | **Preferred:** Hwang/SNUBH, [Zenodo 5945963](https://zenodo.org/records/5945963), [direct TAR.GZ](https://zenodo.org/api/records/5945963/files/Nii_data.tar.gz/content) | **91 meningioma patients**, 171 scans. Additional lesion-negative lung-cancer controls: paper body says 10; supplementary Table S1 says 12. Do not claim 171 patients or a resolved total/control count. | **20,855,300,096 bytes / 20.86 GB** | **CC BY 4.0**, author-deposited Zenodo record | Publisher-MD5 download and file/header inventory. **Patient linking, exact released modalities/masks, and diagnosis/control mapping remain review steps** after acquisition. |
+| Brain metastasis | **PROTEAS**, latest pinned [Zenodo 23171182](https://zenodo.org/records/23171182); [example direct P01 ZIP](https://zenodo.org/api/records/23171182/files/P01.zip/content) | **40 patients**, 185 imaging studies, 65 metastases; **45 course ZIPs**, not 45 independent patients | **15,131,636,697 bytes / 15.13 GB**, including clinical XLSX; radiomics XLSX excluded | **CC BY 4.0**, author-deposited Zenodo release | Publisher-MD5 downloads and documented patient/course/visit/MRI-versus-ancillary parsing. Clinical/mask review still precedes training. |
+| Alzheimer's disease | **Official OASIS-2 legacy raw release**, [part 1](https://download.nrg.wustl.edu/data/OAS2_RAW_PART1.tar.gz), [part 2](https://download.nrg.wustl.edu/data/OAS2_RAW_PART2.tar.gz) | **150 people / 373 sessions**: **64 clinical AD at baseline**, **72 stable nondemented controls**, **14 converters**. Three/four T1 acquisitions per visit are repeats, not new people. | **19,323,750,662 bytes / 19.32 GB** | **Custom OASIS Data Use Terms**, published on the [maintainer's NITRC page](https://www.nitrc.org/projects/oasis/); **not CC0/CC BY** | Direct anonymous download and source-ID/header inventory, **with disclosed weaker integrity**: no publisher cryptographic digest; HTTPS + exact size + full gzip CRC32 + local SHA-256 ledger. **Clinical-group join remains mandatory.** |
+| Post-stroke lesions | [ISLES 2022 public training release](https://zenodo.org/records/7153326), [direct ZIP](https://zenodo.org/api/records/7153326/files/ISLES-2022.zip/content) | **250 annotated cases/patients**, three centers; not the full 400-case challenge | **1,692,717,470 bytes / 1.69 GB** | **CC BY 4.0**, official Zenodo record | Publisher-MD5 download and documented patient inventory. Acute/subacute ischemic lesions, not chronic ATLAS-type lesions. |
 
-All **181 selected image/archive endpoints** returned HEAD 200 with matching `Content-Length`; no MRI payload was downloaded. Server Range support was observed. See [download_probes.json](download_probes.json). This verifies endpoint metadata, not the eventual payload hash: Colab must verify every completed file before extraction or inspection. A successful metadata request does not establish Colab execution, full archive integrity, clinical correctness, or GPU readiness.
+All **51 primary selected endpoints** returned anonymous HEAD 200 with expected byte sizes on October 22; no payload/range bytes from MRI archives were fetched. [download_probes.json](download_probes.json) records the observations. HEAD proves endpoint metadata/access, **not full payload integrity, archive contents, diagnostic correctness or successful Colab execution**. Every asset URL and available publisher digest is pinned in [dataset_catalog.json](dataset_catalog.json).
 
-Meningioma example direct asset: [sub-olf01_T2w.nii.gz](https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf01/anat/sub-olf01_T2w.nii.gz). Every selected file's direct URL, byte size, patient ID and publisher Git-annex SHA-256 is in [dataset_catalog.json](dataset_catalog.json). Metadata is pinned to commit `fd052d49bfa51677fca817efdb68f237eeda9774`, the v1.0.0 tree. Public S3 object names can change; hashes must still match the pinned release. No archive of annex symlinks is mistaken for MRI data.
+The primary choices total **64,611,671,165 compressed bytes** before extraction. Choose diseases independently and check private Drive quota; the notebook defaults every switch off. The 578 existing IXI-T2 files are not read, scanned, moved, modified or downloaded.
 
-Publisher archive checksums:
+## Brain metastasis: resolving record 17253793 and its latest version
 
-- MSD TAR: MD5 `240a19d752f0d9e9101544901065d872`, from [MONAI 1.5.1](https://raw.githubusercontent.com/Project-MONAI/MONAI/1.5.1/monai/apps/datasets.py).
-- ISLES ZIP: MD5 `302ee280373cdd5c190ab763d72a7a50`, from the official Zenodo record.
-- OpenNeuro: individual SHA256E digests from publisher Git-annex pointer metadata, recorded per asset in the catalog. Multipart S3 ETags are **not** treated as MD5.
+The official [latest-version endpoint](https://zenodo.org/api/records/17253793/versions/latest) resolves to **23171182**, published **2026-10-05**. The concept record is **15499111**. Record 17253793 is an earlier version, not an independent cohort. The current metadata has `access_right=open`, `license=cc-by-4.0`, and institutional authors from the University of Cyprus and Bank of Cyprus Oncology Center.
 
-All downloaded files also receive a local SHA-256 for provenance. Local SHA-256 alone is not publisher authenticity verification. TLS verification remains enabled.
+The data descriptor, [Flouri et al., Scientific Data 12, 1828 (2025), doi:10.1038/s41597-025-06131-0](https://doi.org/10.1038/s41597-025-06131-0), was inspected through [Europe PMC full-text XML](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12630624/fullTextXML). It describes confirmed brain metastases with pathologically/clinically confirmed primary tumors and neuroradiologist-refined segmentations. MRI sequences are **T1w, contrast-enhanced T1, T2w and FLAIR**. The release includes raw **DICOM**, processed **NIfTI (.nii.gz)** in BraTS space, CT, radiotherapy data and clinical spreadsheets.
 
-## Alternatives compared
+The documented layout supports a concrete acquisition adapter:
 
-### Glioma
+- Patients use `P01`–`P40`. `P04a/b`, `P07a/b`, `P17a/b`, `P20a/b` and `P23a/b` are separate treatment courses in the **same five patients**. They share a patient/split group. Multiple lesion rows such as P31/P33 entries in the updated clinical spreadsheet are not additional people.
+- `BraTS/baseline`, `BraTS/fu1`, etc. contain `t1.nii.gz`, `t1c.nii.gz`, `t2.nii.gz`, `fla.nii.gz`. Visits remain within the patient.
+- `tumor_segmentation/P??_tumor_mask_baseline.nii.gz` and follow-up masks are lesion annotations: necrotic core **1**, enhancing tumor **2**, edema **3**. Brain tissue labels **10/30/40/50**, CT and radiation plans are **ancillary**, not tumor masks or MRI channels.
+- The original archives are retained and extracted into separate course directories. Raw DICOM is not converted or treated as an additional independent MRI cohort.
 
-| Alternative | Strength | Decision |
+Publisher MD5 and byte size exist for every selected ZIP and the clinical spreadsheet. Compared with 17253793, **six ZIPs changed**: `P04b`, `P06`, `P07a`, `P07b`, `P09`, `P10`. The clinical XLSX also changed. The notebook pins latest URLs/checksums and never merges versions into one destination. The optional radiomics spreadsheet is omitted from the selected transfer.
+
+Limitations: single-center, treatment-enriched longitudinal cohort; small lesions **under 3 mm were excluded**. Clinical protocol/response labels and mask geometry still require data review in Colab. The repository metadata's journal/year fields are inconsistent with the published paper; the citation above uses the actual 2025 descriptor, not the deposit's journal-year text.
+
+Compared alternatives remain useful but are not required for this qualified transfer: UCSF-BMSR's official portal requires reCAPTCHA before its actual endpoint/hash can be verified; UCSD-BMETS-Longitudinal has 300 subjects, 163 GB and CC BY 4.0, but its advertised imaging transfer is Aspera. The notebook does not bypass challenges or replace data with pretrained weights/third-party Kaggle slices.
+
+## Alzheimer's: qualifying access versus correct clinical labels
+
+### Why OASIS-2 can now be prepared
+
+Two independent authorized sources resolve the earlier access/terms gap:
+
+1. The [official NrgXnat/oasis-scripts README](https://github.com/NrgXnat/oasis-scripts#oasis-scripts-overview), maintained by the OASIS/XNAT team, explicitly states that its signed-DUA/project-access download scripts for **OASIS-3/4** are **not needed for OASIS-1/2**, whose data download directly. Do not incorrectly generalize later-release registration requirements to these legacy releases.
+2. The [OASIS NITRC resource](https://www.nitrc.org/projects/oasis/), maintained by Daniel Marcus/OASIS administrators at Washington University, publishes the custom OASIS terms and identifies OASIS-1/2 as public scientific resources. The official [Washington University download directory](https://download.nrg.wustl.edu/data/) lists both `OAS2_RAW_PART1.tar.gz` (**10,874,461,059 bytes**) and `OAS2_RAW_PART2.tar.gz` (**8,449,289,603 bytes**); both answer anonymous HEAD 200 with Range support.
+
+The terms prohibit reidentification/contact, facial recognition/3D facial rendering, require source-specific acknowledgment/citation and usage information to the Knight ADRC on request. The separate Avid review condition concerns specified PET tracers, not these T1 MRI archives. No registration, application, approval bypass, credentials or unauthorized MRI mirror is used. The central OASIS website still returns 503; the authorized NITRC resource, maintainer documentation and official server supply the evidence used here. Terms are custom: do not relabel the data CC0 or CC BY.
+
+### Clinical AD is not a generic dementia/MCI label
+
+[Marcus et al., Journal of Cognitive Neuroscience 22(12), 2677–2684 (2010), doi:10.1162/jocn.2009.21407](https://doi.org/10.1162/jocn.2009.21407), available as [PMC2895005](https://pmc.ncbi.nlm.nih.gov/articles/PMC2895005/), defines **150 people aged 60–96**: 64 clinically AD at baseline, 72 nondemented throughout observation and 14 initially nondemented people who later converted. There are **373 sessions**, each with three/four **3D T1w MP-RAGE** acquisitions on one **1.5 T scanner**. The descriptor specifies NIfTI-1 distribution; the inspector supports both single-file NIfTI and paired IMG/HDR, and hashes the paired header too. Exact package inventory is verified only after Colab acquisition.
+
+The paper describes cohort-specific clinical AD assessment, including collateral history, progression and exclusion of alternative contributors. Its very-mild AD cases may have CDR 0.5, but **this does not justify calling arbitrary CDR 0.5/MCI records AD in other datasets**. No biomarker-confirmation claim is made.
+
+The notebook **does not infer diagnosis from the filename, absent metadata, missing mask, generic dementia label or CDR threshold**. It groups all `OAS2_####` visits under one patient and leaves clinical diagnosis null until a reviewed per-file clinical-group CSV is supplied. The allowed groups are:
+
+- `AD_clinical_baseline`: 64 independent baseline-AD patients.
+- `control_stable`: 72 stable controls.
+- `converter_excluded`: all visits of the 14 converters, kept out of a binary AD/control cohort.
+
+Conflicting within-patient labels, changed source IDs, generic `MCI`/`Demented`/CDR labels and incorrect final group counts are rejected. The first download can finish with **clinical mapping pending**, not a falsely completed labeled dataset. A private template is produced; missing clinical metadata must be obtained/reviewed from authorized source material, never fabricated.
+
+### OASIS-2 integrity limitation
+
+The official directory and response metadata publish **no cryptographic checksum**. The notebook does **not** invent an MD5, treat Apache ETags as MD5, or claim a newly computed SHA-256 is publisher verification. Only these two exact official legacy URLs are allowed to use the explicitly named `https_size_gzip_crc32_local_sha256` policy:
+
+- HTTPS and exact HEAD byte size during transfer.
+- Full gzip-stream CRC32/uncompressed-size verification before promotion.
+- A private local SHA-256 ledger, compared on subsequent use; different existing files are preserved.
+
+This is **weaker than comparison with a publisher cryptographic digest**. The notebook prints that fact before transfer and records it in source/asset reports. If publisher-hash verification is essential, leave Alzheimer's disabled. All other sources retain mandatory publisher MD5/SHA-256; this policy cannot override a provided checksum or be used for another host/file.
+
+### Other AD alternatives investigated
+
+| Repository/source | Verified finding | Decision |
 |---|---|---|
-| MSD Task01 | Direct anonymous HTTPS, multisite/multimodal 3D FLAIR/T1/T1ce/T2, expert masks, documented license and fixed checksum; compatible with the existing project | Select as the practical verified transfer. It is not claimed to be the largest contemporary glioma cohort. |
-| [UCSF-PDGM](https://www.cancerimagingarchive.net/collection/ucsf-pdgm/) | Strong pathology/molecular labels and advanced sequences; current TCIA table: **495 subjects / 501 studies**, 142 GB, CC BY 4.0 | Current official primary transfer requires IBM Aspera Connect. A plain authorized HTTP archive and its checksum were not verified. Do not repeat the older 501-independent-subject claim: the current release recognizes follow-ups. |
-| BraTS challenge releases | Large expert-annotated 3D cohorts | Current release access/terms must be checked individually; do not use an unofficial Kaggle mirror to evade registration. MSD explicitly derives from BraTS 2016/2017, so combining them does not create independent subjects. |
-| TCGA-GBM / TCGA-LGG | Pathology-rich, heterogeneous clinical images | Additional DICOM curation, variable sequences and overlap with BraTS; not selected over the verified direct MSD acquisition in this notebook. Current image access must be checked rather than assumed from historical public availability. |
+| [MIRIAD, NITRC](https://www.nitrc.org/projects/miriad/); [Malone et al. descriptor](https://doi.org/10.1016/j.neuroimage.2012.12.044) | 46 mild/moderate AD patients + 23 controls; 708 3D T1 scans. NITRC publishes a **“By registering and downloading”** agreement, prohibits redistribution without agreement; its file page has no data packages. | Clinically useful, but does not meet the requested verified no-registration route. Do not use an unauthorized mirror. |
+| OASIS-1 | Maintainer resource reports 416 participants, 100 clinically AD; official legacy archive index is public. | Credible alternative; OASIS-2 has a more clearly documented stable-control/AD/converter grouping and is chosen here. Neither all 416 people nor all demented/MCI subjects may be labeled AD. |
+| OASIS-3/4, ADNI, AIBL | Richer clinical/imaging data; documented registration/DUA/project-access or application workflows. | Do not substitute gated releases under the no-registration requirement. |
+| [Zenodo 20426271](https://zenodo.org/records/20426271) | Restricted; description counts 24,000 **JPG images** in Demented/NonDemented categories, without independent clinical-patient provenance. | Not a 3D clinically AD-labeled replacement. |
+| [Zenodo 8113922](https://zenodo.org/records/8113922) | 16 AD / 10 controls / 7 FTD, but restricted derived connectivity matrices/time series, not the requested whole-brain MRI transfer. | Exclude. |
+| [Zenodo 1247911](https://zenodo.org/records/1247911) | Public PET/fMRI paper describes mixed aMCI/AD patients, but deposit supplies the paper PDF, not raw MRI. | Do not treat a paper or combined MCI/AD group as a labeled AD MRI dataset. |
+| OpenNeuro | ds004504/ds006036/ds007427 are EEG; ds004796 is healthy/risk-genotype imaging; ds004767 is ex-vivo temporal-lobe specimens. | Not clinically diagnosed in-vivo whole-brain AD/control substitutes. |
+| Figshare, Dryad and GIN searches | Additional hits included publications, clinical/radiomic tables, model files, derived matrices or other diseases; GIN was unavailable (503). | No additional independently verified clinical whole-brain MRI transfer selected; no adverse conclusion about the entire repositories is implied. |
 
-MSD's archive is **7.61 GB**, not the approximately 2 GB quoted in the older segmentation Colab notebook. That notebook is preserved, not edited. Metadata counts of 750 volumes and 484 training cases are corroborated by the [official MONAI tutorial](https://github.com/Project-MONAI/tutorials/blob/main/3d_segmentation/brats_segmentation_3d.ipynb). Cases, channels, slices and independent patients must not be conflated.
+## Meningioma: why the 37-patient cohort is not representative enough
 
-### Meningioma
+The retained [OpenNeuro ds007345 v1.0.0](https://openneuro.org/datasets/ds007345/versions/1.0.0) option remains useful: **37 baseline patients**, 179 selected structural/mask files, **4,407,701,072 bytes**, **CC0**. It is a single-center **olfactory-groove meningioma** cohort. Its restricted anatomy and small sample do not represent meningioma generally. Follow-up folders were excluded, not counted as additional people.
 
-| Alternative | Evidence | Decision |
-|---|---|---|
-| OpenNeuro ds007345 | Official CC0 release, [37-row baseline participant table](https://raw.githubusercontent.com/OpenNeuroDatasets/ds007345/fd052d49bfa51677fca817efdb68f237eeda9774/participants.tsv), structural 3D MRI and mask pointers | Select the baseline structural/mask subset. Smaller than gated alternatives but satisfies verified access/permission requirements. |
-| [Meningioma-SEG-CLASS](https://www.cancerimagingarchive.net/collection/meningioma-seg-class/) | 96 pathology-confirmed patients; T1/T1ce/FLAIR, RTSTRUCT; 9.39 GB | **Exclude**: current imaging table is labeled **NIH Controlled Data Access Policy**. The separate clinical spreadsheet's CC BY 4.0 does not make the images openly licensed/ungated. |
-| [MISGRA, Figshare 33263757](https://api.figshare.com/v2/articles/33263757) | 103 patients, 433 sessions, 1,199 volumes, 22,398,716,158 bytes; grounded report annotations | **Exclude**: metadata explicitly says signed institutional Research Data Access Agreement and manual requests; `is_confidential=true`. Its description mentioning CC BY-NC does not override controlled access. Annotations are points/boxes/lines, not necessarily voxel masks. |
-| BraTS-MEN / challenge cohorts | Larger 3D annotated releases | Not accepted without a currently verified authorized no-registration download and research terms for the chosen version. |
-| Figshare/Kaggle slice collections; MeniSeg | Some readily available 2D tumor slices; [MeniSeg README](https://github.com/CindyZJT/MeniSeg) says the dataset will be released later | Reject 2D substitutes and unreleased data when a qualified 3D alternative exists. |
+A stronger accessible alternative is now verified:
 
-Selected OpenNeuro limitations: one center, only olfactory groove meningioma, limited grade diversity, and not all edema masks present. T1 `run-01`/`run-02` alone does not identify contrast administration, so the manifest records contrast as unspecified pending sidecar/clinical review. The entire release also has diffusion/fMRI/processed derivatives; these are excluded from the selected 4.41 GB to keep the structural detection cohort focused. Follow-ups remain grouped with baseline patients if introduced later.
+- **Source/access:** author-deposited, open [Zenodo 5945963](https://zenodo.org/api/records/5945963), latest version verified, CC BY 4.0, direct TAR.GZ with publisher MD5 **`c3b2ce5fbad44e1885ac73a03be9d38b`**. HEAD confirms **20,855,300,096 bytes** without MRI transfer.
+- **Independent count:** [Hwang et al., Journal of Imaging 8(12), 327 (2022), doi:10.3390/jimaging8120327](https://doi.org/10.3390/jimaging8120327), checked in [PMC9782766 full text](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9782766/fullTextXML), reports **91 meningioma patients**. Of these, 35 account for 115 longitudinal scans and 56 have one scan each: **171 scans, not 171 people**.
+- **Anatomical coverage:** supplementary Table S2 lists convexity **48**, parasagittal **10**, falx **10**, sphenoid wing **10**, tentorial **6**, olfactory groove **3**, tuberculum sellae **2**, clinoidal **1**, intraventricular **1**. Skull-base attachment is present in **22/91**. This is materially broader than an exclusively olfactory-groove sample.
+- **Imaging/labels:** clinical protocol includes T1w, 3D contrast-enhanced T1 (1 mm acquisition), T2w and FLAIR on 1.5/3 T systems. Two radiologists manually labeled meningioma ROIs on preprocessed T1ce. The release states NIfTI image files; **exact released channel/mask inventory and file-to-patient linkage have not been inspected in Cloud** and remain Colab review steps.
+- **Limitations:** one tertiary hospital, supratentorial selection and follow-up enrichment; not a population-representative multicenter cohort. Paper body says **10** lesion-negative controls, while supplement Table S1 says **12**. These subjects have lung cancer with no brain/extrapulmonary metastases; they are not equivalent to healthy IXI controls. Do not silently resolve the discrepancy or report a definitive 101/103 total.
 
-### Brain metastasis — no qualifying transfer selected
+The notebook prefers this larger source for acquisition, retains `MENINGIOMA_SOURCE="openneuro37"` for the original fully documented baseline layout, and does not download both by default. For the larger source, undocumented scan filenames are **not invented as patient IDs**: the first run returns a file/header inventory with null identities/diagnoses plus a private mapping template. A reviewed source-based mapping is required before a complete patient manifest is reported; it must establish **91 distinct meningioma patients**. Unknown diagnoses and missing masks do not become negative controls.
 
-| Alternative | Evidence | Outstanding condition |
-|---|---|---|
-| UCSF-BMSR | [Publisher's official benchmark repository](https://github.com/rachitsaluja/UCSF-BMSR-benchmarks), paper [doi:10.1148/ryai.230126](https://doi.org/10.1148/ryai.230126), [publisher data portal](https://imagingdatasets.ucsf.edu/dataset/1) | The publisher portal was rendered with TLS verification preserved. Version 1.3 advertises **412 patients / 560 exams**, but explicitly says **461 exams** are currently available. Independent patient count within that public subset is not stated. The Download button responds **“Please complete the ReCaptcha challenge”**. No challenge was bypassed; no current direct MRI endpoint or publisher checksum was verified. Dataset-level license still requires confirmation. The official benchmark README explicitly prohibits commercial use; its pretrained-model Drive link is **not** an MRI dataset link. |
-| [UCSD-BMETS-Longitudinal](https://www.cancerimagingarchive.net/collection/ucsd-bmets-longitudinal/) | Current official page: **300 subjects**, 163 GB, NIfTI images/segmentations, **CC BY 4.0**, [doi:10.7937/5ejb-9g94](https://doi.org/10.7937/5ejb-9g94) | Strong candidate for a later acquisition adapter, but the published imaging transfer is **Aspera**, not a verified direct HTTP archive. Abstract says 1,065 timepoints; table says 1,066 studies. Neither is 1,066 independent patients. |
-| BrainMetShare / Stanford AIMI | [Official source landing page](https://aimi.stanford.edu/datasets/brainmetshare) referenced by downstream work | Current official access/permission and a direct checksum-backed payload were not verified. Do not use third-party Kaggle slices as an authorized replacement. |
+Other larger candidates remain unsuitable under these access requirements: Meningioma-SEG-CLASS currently labels imaging controlled access (96 patients); MISGRA (103 patients, 433 sessions) explicitly requires a signed institutional data-access agreement; Zenodo 6939897 is restricted and has no MRI files; Zenodo 5148138 describes 46 patients but releases a small spreadsheet, not their scans. Existing BraTS-MEN access conditions must be verified per version rather than evaded with slice mirrors. A larger advertised study count alone is not a downloadable dataset.
 
-The metastasis switch is disabled with an actionable error. No assertion that an ungated dataset does not exist is justified by an unresolved portal. A future change should verify one of these publisher transfers, then add its exact assets and a tested patient-identity adapter.
+## Preserved glioma and stroke decisions
 
-### Alzheimer's disease — no qualifying clinical cohort selected
+- **Glioma:** MSD Task01 remains the practical anonymous, authorized, checksum-backed 3D choice. Publisher MD5 **`240a19d752f0d9e9101544901065d872`** comes from [MONAI 1.5.1](https://raw.githubusercontent.com/Project-MONAI/MONAI/1.5.1/monai/apps/datasets.py); modalities are FLAIR/T1w/T1ce/T2w. Cite [Antonelli et al., doi:10.1038/s41467-022-30695-9](https://doi.org/10.1038/s41467-022-30695-9) and source BraTS work. MSD overlaps BraTS 2016/17 and cannot be pooled as an independent cohort. UCSF-PDGM has stronger molecular/pathology context, but the current 495-subject/501-study, 142 GB release advertises Aspera rather than the verified plain archive used here.
+- **Stroke:** ISLES 2022 provides FLAIR/DWI/ADC and expert masks; MD5 **`302ee280373cdd5c190ab763d72a7a50`** is published in the [Zenodo record](https://zenodo.org/api/records/7153326). Cite [Hernandez Petzsche et al., doi:10.1038/s41597-022-01875-5](https://doi.org/10.1038/s41597-022-01875-5). Native-space sequences are not assumed aligned. ATLAS 3.0 is a larger chronic T1 alternative (1,453 public training participants), but release-specific license/checksum was not fully verified; its counts overlap/replenish ATLAS 2.0, so they are not additive.
 
-| Alternative | Strength | Decision |
-|---|---|---|
-| [OASIS-1](https://sites.wustl.edu/oasisbrains/) | Historically 416 participants, including a dementia subset; 3D structural scans and clinical tables | A legacy [disc-1 archive](https://download.nrg.wustl.edu/data/oasis_cross-sectional_disc1.tar.gz) answered anonymous HEAD 200, 1,380,527,970 bytes. **This alone is insufficient**: official current OASIS pages/terms returned 503, the full release's checksums/permissions were not verified, and 416 is not an Alzheimer-positive patient count. No acquisition is enabled. |
-| OASIS-2 / OASIS-3 | Longitudinal imaging and richer phenotyping | Verify present access conditions and source versions separately; do not assume access to legacy OASIS-1 implies access to later releases or pool repeat visits as new patients. |
-| ADNI / AIBL | Strong longitudinal clinical diagnosis/biomarkers | Controlled application/registration workflows do not fit the stated no-registration/no-manual-approval requirement. No credentials are requested. |
-| [OpenNeuro ds004767](https://github.com/OpenNeuroDatasets/ds004767) | Official CC0 3D MRI with pathology-related annotations | **Exclude for this clinical detection cohort**: ex-vivo 9.4 T temporal-lobe specimens, not in-vivo whole-brain clinical scans. README describes 55 specimens and maps for 25 donors; specimens must not be counted as independent AD patients. |
-| [PEARL-Neuro ds004796](https://github.com/OpenNeuroDatasets/ds004796) | CC0; EEG/fMRI and risk-genotype metadata | **Exclude as an AD-positive cohort**: the official README describes 192 healthy middle-aged participants, with neuroimaging for 79. Genetic risk is not an Alzheimer diagnosis. OpenNeuro ds004504/ds006036 and ds007427 are EEG, not suitable MRI substitutes. |
-| [Zenodo 7048297](https://zenodo.org/records/7048297) and common Kaggle dementia slices | Titles can suggest downloadable AD MRI | Record 7048297 actually supplies a **PDF only**, not MRI. Reject 2D slice collections without verifiable patient provenance, research rights and independent identity when evaluating a 3D clinical workflow. |
+## Implementation, validation and remaining work
 
-CDR is a clinical dementia severity measure, not proof of biomarker-confirmed Alzheimer's disease. A cohort can include controls, MCI and other dementia etiologies; diagnosis must come from documented clinical metadata, not a folder title or the dataset's name.
+Notebook: `detection/notebooks/Acquire_Best_5_Disease_Datasets.ipynb`. Existing branch/PR and the original detection/segmentation work are preserved. `sync_acquisition_notebook.py` updates embedded reviewed helpers/catalog without network or MRI I/O.
 
-### Post-stroke lesions
+- Five independent switches default off; meningioma has a source selector. Download/extraction/hashing/header inspection are CPU acquisition work in Colab, not model preprocessing/training.
+- Colab/Drive and IXI-protection guards remain. HTTPS is verified; publisher hashes for existing sources are unchanged. OASIS's narrow legacy policy is prominently disclosed, not presented as publisher hashing.
+- Resume uses validated HTTP Range/If-Range. Extraction rejects traversal, links, special files, duplicate paths and oversized archives. One **shared extraction budget per disease** covers all its archives; 45 PROTEAS ZIPs do not multiply the quota reservation 45-fold. Different existing files and previous reports are preserved.
+- PROTEAS patient/case/visit parsing, MRI-versus-CT/RTP/tissue roles, NIfTI IMG/HDR support, explicit identity/clinical CSV mapping and pending-review states are implemented. Private manifests contain shape, dtype, spacing, affine, byte counts and hashes. **Pending review never becomes training-ready.**
+- No MRI, clinical spreadsheet rows, credentials or notebook outputs are committed. [source_audit.json](source_audit.json) and [download_probes.json](download_probes.json) retain metadata provenance and observations.
+- Offline tests use artificial bytes/archives and synthetic NIfTI headers only. Actual full payload integrity, extraction/package layout, Colab Drive behavior, T4 CUDA/AMP operation and clinical correctness remain **unexecuted** until an opt-in Colab run. The notebook retains a tiny CUDA/MONAI/AMP readiness self-test; it is not a model benchmark.
+- No model training starts. Later training requires verified/approved datasets, correct patient-level splits, CUDA on Colab T4, efficient 3D patches/AMP and full Drive checkpoint/resume state. IXI T2 controls must not be pooled with unmatched disease modalities/scanners/ages without reviewing confounding.
 
-| Alternative | Evidence | Decision |
-|---|---|---|
-| ISLES 2022 | Open official Zenodo release, 250 masks, FLAIR/DWI/ADC, three centers and multiple scanner vendors/field strengths, fixed size/MD5 | Select for verified acquisition of **acute/subacute ischemic** lesions. Clinical target differs from chronic structural lesions. |
-| [ATLAS 3.0](https://github.com/npnl/ATLAS) | Official README: **1,453 public training participants**, 362 hidden generalizability cases. [Official S3 listing](https://fcp-indi.s3.amazonaws.com/?list-type=2&prefix=data/Projects/INDI/ATLAS/R3.0/&max-keys=20) confirms raw TAR.GZ **8,244,197,870 bytes** and preprocessed TAR.GZ **14,823,858,360 bytes** | Promising larger **chronic T1** cohort. Do not select automatically: release-specific license and a usable publisher checksum were not verified here. S3 ETags have multipart suffixes and must not be presented as full-file MD5. NITRC landing hostname contains an underscore and was rejected by the environment's DNS allowlist validator. |
-| ATLAS 2.0 | Official README: 655 public training images with masks, 300 additional public test images without masks, 316 hidden generalizability cases | Do not add its counts to ATLAS 3.0: the publisher says 3.0 expands/replaces the old public release. |
-| ISLES challenge hidden test sets | Additional evaluation cohorts | Hidden masks/test data are not free labeled training data; do not download through a registration path or misrepresent challenge totals. |
-
-If the desired stroke target is specifically chronic residual lesions rather than acute ischemia, leave the switch off and resolve ATLAS 3.0 permissions/checksum before selecting it. ISLES is not silently presented as equivalent.
-
-## Reproducibility and remaining validation
-
-- Notebook: `detection/notebooks/Acquire_Best_5_Disease_Datasets.ipynb`. It embeds `detection/acquisition.py` and the reviewed catalog; it does not fetch executable helpers at runtime. Existing detection setup cells are reused unchanged.
-- Five independent user switches default off. Unresolved choices fail explicitly. Colab-only and private-Drive guards prohibit Cloud acquisition. IXI is not scanned or modified.
-- Preflight HEADs, Drive-quota input, filesystem space checks, bounded streaming, validated HTTP resumption, publisher checksums, safe ZIP/TAR extraction, and SHA-256 provenance are implemented. All archive files are retained, so storage must cover both compressed and extracted data.
-- Public source/evidence metadata is tracked in `source_audit.json`, `download_probes.json` and `dataset_catalog.json`. No MRI data, clinical table values, credentials or notebook outputs are committed.
-- Patient/file manifests are generated **in private Drive after acquisition**. They include source patient/case groups, file roles, modality, shape, dtype, spacing, affine, byte size and hashes. They are not fabricated before actual acquisition. Missing masks, diagnosis confidence, image/mask geometry, near duplicates and cross-release identities still require clinical/data review.
-- Offline checks use artificial payloads, synthetic NIfTI headers and mocked responses only. Actual Colab transfer, full payload checksums/extraction, Tesla T4 CUDA behavior and acquired clinical data have **not** been executed or verified in Codex Cloud.
-- Acquisition/metadata work is on CPU. The notebook reuses strict CUDA checks and has a tiny CUDA/MONAI/AMP self-test and GPU memory report for the future T4 workflow. There is no model, training loop, checkpoint load or training-performance claim. A later approved training task must use patch-based CUDA/AMP, measure VRAM/throughput, and save/resume full training state in private Drive.
-- Do not combine IXI T2 controls with disease cohorts without reviewing modality/site/scanner/age confounding. Do not random-split slices, modalities or visits independently. Cross-source identity review is still required; exact file hashing cannot prove absence of near duplicates.
-
-Run offline checks from the repository root with the existing environment:
+Validation commands from the checkout root:
 
 ```bash
+python detection/sync_acquisition_notebook.py
 .venv/bin/python -m unittest -v detection.test_acquisition
 ```
