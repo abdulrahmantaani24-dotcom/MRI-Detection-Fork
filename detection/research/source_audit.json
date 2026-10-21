@@ -1,0 +1,88 @@
+[
+  {
+    "source": "OpenNeuro description",
+    "url": "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007345/fd052d49bfa51677fca817efdb68f237eeda9774/dataset_description.json",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "0fb46cdac0546e351eb14bf57acec5d8b6d8c96d069a3534023a08223503aaf2",
+    "payload_downloaded": false
+  },
+  {
+    "source": "OpenNeuro tree",
+    "url": "https://api.github.com/repos/OpenNeuroDatasets/ds007345/git/trees/1.0.0?recursive=1",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "b02ee7a787e43fb9f5b4253eba7ff62c3b4f69091fb4c39e4b40bb2aab27cee3",
+    "payload_downloaded": false
+  },
+  {
+    "source": "ISLES record",
+    "url": "https://zenodo.org/api/records/7153326",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "72ca1a92d3c7faa231887d5bfecfe6854814721b7c98d03858c535471b903b87",
+    "payload_downloaded": false
+  },
+  {
+    "source": "Meningioma-SEG-CLASS collection",
+    "url": "https://www.cancerimagingarchive.net/collection/meningioma-seg-class/",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "a2cdac767b49dfc239dec9188fc58452bb09ee114f7f2495a5a93d5865aca1a1",
+    "payload_downloaded": false
+  },
+  {
+    "source": "UCSF-PDGM collection",
+    "url": "https://www.cancerimagingarchive.net/collection/ucsf-pdgm/",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "7687ef2872a76f58417ea88e89bb6d7838529ae5845b6ba9504dcbce3fa2a06e",
+    "payload_downloaded": false
+  },
+  {
+    "source": "UCSD-BMETS collection",
+    "url": "https://www.cancerimagingarchive.net/collection/ucsd-bmets-longitudinal/",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "f1e7eee220271fe25edacb349fb7121a1ea25b2e1452477fe6640b89a35ee310",
+    "payload_downloaded": false
+  },
+  {
+    "source": "MISGRA record",
+    "url": "https://api.figshare.com/v2/articles/33263757",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "21d68b4fe0f11ae08ab84a5e21a43c0eee179cd9cd9df9b0ec52d7d39ec17664",
+    "payload_downloaded": false
+  },
+  {
+    "source": "AD non-dataset record",
+    "url": "https://zenodo.org/api/records/7048297",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "3b2fab6094b239bf60f9d03907d73db9e2a37c0c3abd1df88806abe734c8f651",
+    "payload_downloaded": false
+  },
+  {
+    "source": "ATLAS official README",
+    "url": "https://raw.githubusercontent.com/npnl/ATLAS/master/README.md",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "f310bb6d16a0fe17a64d8cf989c3656725a5cc4760346ed4f3174aa0d2e05bd0",
+    "payload_downloaded": false
+  },
+  {
+    "source": "ATLAS S3 listing",
+    "url": "https://fcp-indi.s3.amazonaws.com/?list-type=2&prefix=data/Projects/INDI/ATLAS/R3.0/&max-keys=20",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "cbe4902784a935df26ef73b74c128f125426a22fa81c98fa895a8bad9e48a139",
+    "payload_downloaded": false
+  },
+  {
+    "source": "Medical Decathlon official license page",
+    "url": "https://medicaldecathlon.com/",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "a5c4a36c7f32ba1f0679c0e5d2d654bf9f10a2ac84f108bf21da86e0a18394ab",
+    "observation": "Explicit CC-BY-SA 4.0 data permission",
+    "payload_downloaded": false
+  },
+  {
+    "source": "UCSF-BMSR v1.3 rendered publisher portal and download dialog",
+    "url": "https://imagingdatasets.ucsf.edu/dataset/1",
+    "retrieved_on": "2026-10-21",
+    "response_sha256": "9f1c3fa50ee5e4ac161ee0bffe29768e68dabe6b586f3ce9f1a582de358157f2",
+    "observation": "412 patients / 560 exams in full cohort; 461 advertised public exams; Download requires reCAPTCHA. No challenge bypass, consent acceptance or MRI transfer.",
+    "payload_downloaded": false
+  }
+]

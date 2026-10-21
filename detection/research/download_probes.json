@@ -1,0 +1,1450 @@
+[
+  {
+    "url": "https://msd-for-monai.s3-us-west-2.amazonaws.com/Task01_BrainTumour.tar",
+    "status": 200,
+    "bytes": 7608266240,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/x-tar"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf01/segmentation/sub-olf01_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 105697,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf02/segmentation/sub-olf02_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 295013,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf02/segmentation/sub-olf02_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 111809,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf03/segmentation/sub-olf03_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 201309,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf03/segmentation/sub-olf03_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 107366,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf04/segmentation/sub-olf04_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 236203,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf04/segmentation/sub-olf04_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 112985,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf05/segmentation/sub-olf05_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 218413,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf05/segmentation/sub-olf05_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 105549,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf06/segmentation/sub-olf06_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 260088,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf06/segmentation/sub-olf06_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 118913,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf07/segmentation/sub-olf07_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 300002,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf07/segmentation/sub-olf07_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 105704,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf08/segmentation/sub-olf08_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 233012,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf08/segmentation/sub-olf08_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 124258,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf09/segmentation/sub-olf09_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 115778,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf10/segmentation/sub-olf10_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 257317,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf10/segmentation/sub-olf10_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 107075,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf11/segmentation/sub-olf11_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 191178,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf11/segmentation/sub-olf11_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 109527,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf12/segmentation/sub-olf12_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 265135,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf12/segmentation/sub-olf12_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 109936,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf13/segmentation/sub-olf13_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 102825,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf14/segmentation/sub-olf14_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 202848,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf14/segmentation/sub-olf14_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 102052,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf15/segmentation/sub-olf15_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 122204,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf16/segmentation/sub-olf16_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 195727,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf16/segmentation/sub-olf16_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 105007,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf17/segmentation/sub-olf17_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 283446,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf17/segmentation/sub-olf17_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 110416,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf18/segmentation/sub-olf18_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 230844,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf18/segmentation/sub-olf18_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 119233,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf19/segmentation/sub-olf19_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 29542,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf19/segmentation/sub-olf19_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 143211,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf20/segmentation/sub-olf20_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 282350,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf20/segmentation/sub-olf20_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 114631,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf21/segmentation/sub-olf21_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 352158,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf21/segmentation/sub-olf21_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 100373,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf22/segmentation/sub-olf22_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 307415,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf22/segmentation/sub-olf22_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 110879,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf23/segmentation/sub-olf23_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 222059,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf23/segmentation/sub-olf23_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 105382,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf24/segmentation/sub-olf24_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 191627,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf24/segmentation/sub-olf24_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 125947,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf25/segmentation/sub-olf25_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 244715,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf25/segmentation/sub-olf25_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 107978,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf26/segmentation/sub-olf26_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 191910,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf26/segmentation/sub-olf26_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 103688,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf27/segmentation/sub-olf27_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 272120,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf27/segmentation/sub-olf27_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 111513,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf28/segmentation/sub-olf28_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 258967,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf28/segmentation/sub-olf28_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 113882,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf29/segmentation/sub-olf29_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 219764,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf29/segmentation/sub-olf29_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 104170,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf30/segmentation/sub-olf30_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 224352,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf30/segmentation/sub-olf30_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 124513,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf31/segmentation/sub-olf31_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 264377,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf31/segmentation/sub-olf31_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 113213,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf32/segmentation/sub-olf32_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 252579,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf32/segmentation/sub-olf32_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 123734,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf33/segmentation/sub-olf33_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 125197,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf34/segmentation/sub-olf34_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 125131,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf35/segmentation/sub-olf35_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 336594,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf35/segmentation/sub-olf35_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 107420,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf36/segmentation/sub-olf36_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 225976,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf36/segmentation/sub-olf36_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 121547,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf37/segmentation/sub-olf37_edema_mask.nii.gz",
+    "status": 200,
+    "bytes": 267171,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/derivatives/sub-olf37/segmentation/sub-olf37_tumor_mask.nii.gz",
+    "status": 200,
+    "bytes": 105137,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf01/anat/sub-olf01_T2w.nii.gz",
+    "status": 200,
+    "bytes": 52046803,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf01/anat/sub-olf01_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 26564886,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf01/anat/sub-olf01_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29136633,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf02/anat/sub-olf02_T2w.nii.gz",
+    "status": 200,
+    "bytes": 54703793,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf02/anat/sub-olf02_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 26493380,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf02/anat/sub-olf02_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 32703957,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf03/anat/sub-olf03_T2w.nii.gz",
+    "status": 200,
+    "bytes": 49290364,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf03/anat/sub-olf03_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 26434171,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf03/anat/sub-olf03_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 28519099,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf04/anat/sub-olf04_T2w.nii.gz",
+    "status": 200,
+    "bytes": 54644197,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf04/anat/sub-olf04_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 26863400,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf04/anat/sub-olf04_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 28148902,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf05/anat/sub-olf05_T2w.nii.gz",
+    "status": 200,
+    "bytes": 57538406,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf05/anat/sub-olf05_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 27166908,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf05/anat/sub-olf05_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29808174,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf06/anat/sub-olf06_T2w.nii.gz",
+    "status": 200,
+    "bytes": 60424073,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf06/anat/sub-olf06_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29533500,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf06/anat/sub-olf06_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 34469078,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf07/anat/sub-olf07_T2w.nii.gz",
+    "status": 200,
+    "bytes": 53090990,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf07/anat/sub-olf07_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 27203938,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf07/anat/sub-olf07_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29164678,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf08/anat/sub-olf08_T2w.nii.gz",
+    "status": 200,
+    "bytes": 48387585,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf08/anat/sub-olf08_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 25366316,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf08/anat/sub-olf08_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 26557014,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf09/anat/sub-olf09_T2w.nii.gz",
+    "status": 200,
+    "bytes": 59341057,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf09/anat/sub-olf09_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 27728670,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf09/anat/sub-olf09_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 32637549,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf10/anat/sub-olf10_T2w.nii.gz",
+    "status": 200,
+    "bytes": 54746691,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf10/anat/sub-olf10_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 25601712,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf10/anat/sub-olf10_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 30659867,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf11/anat/sub-olf11_T2w.nii.gz",
+    "status": 200,
+    "bytes": 63288734,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf11/anat/sub-olf11_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29156485,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf11/anat/sub-olf11_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 32414647,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf12/anat/sub-olf12_T2w.nii.gz",
+    "status": 200,
+    "bytes": 58224705,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf12/anat/sub-olf12_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 28506363,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf12/anat/sub-olf12_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 32614169,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf13/anat/sub-olf13_T2w.nii.gz",
+    "status": 200,
+    "bytes": 44658524,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf13/anat/sub-olf13_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 26670719,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf13/anat/sub-olf13_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 27754246,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf14/anat/sub-olf14_T2w.nii.gz",
+    "status": 200,
+    "bytes": 64374470,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf14/anat/sub-olf14_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29631084,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf14/anat/sub-olf14_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 33065901,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf15/anat/sub-olf15_T2w.nii.gz",
+    "status": 200,
+    "bytes": 65779723,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf15/anat/sub-olf15_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 31277376,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf15/anat/sub-olf15_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 34894590,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf16/anat/sub-olf16_T2w.nii.gz",
+    "status": 200,
+    "bytes": 47107039,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf16/anat/sub-olf16_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 23320473,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf16/anat/sub-olf16_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 25777505,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf17/anat/sub-olf17_T2w.nii.gz",
+    "status": 200,
+    "bytes": 74713934,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf17/anat/sub-olf17_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 38947507,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf17/anat/sub-olf17_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 43991818,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf18/anat/sub-olf18_T2w.nii.gz",
+    "status": 200,
+    "bytes": 66516117,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf18/anat/sub-olf18_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 30228691,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf18/anat/sub-olf18_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 33477204,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf19/anat/sub-olf19_T2w.nii.gz",
+    "status": 200,
+    "bytes": 68157662,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf19/anat/sub-olf19_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 27970297,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf19/anat/sub-olf19_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 36646205,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf20/anat/sub-olf20_T2w.nii.gz",
+    "status": 200,
+    "bytes": 74078418,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf20/anat/sub-olf20_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 27205472,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf20/anat/sub-olf20_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 33004680,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf21/anat/sub-olf21_T2w.nii.gz",
+    "status": 200,
+    "bytes": 58922872,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf21/anat/sub-olf21_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 28543534,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf21/anat/sub-olf21_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 38501693,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf22/anat/sub-olf22_T2w.nii.gz",
+    "status": 200,
+    "bytes": 59689076,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf22/anat/sub-olf22_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29765962,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf22/anat/sub-olf22_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 32434598,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf23/anat/sub-olf23_T2w.nii.gz",
+    "status": 200,
+    "bytes": 57832122,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf23/anat/sub-olf23_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 26992412,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf23/anat/sub-olf23_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29205413,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf24/anat/sub-olf24_T2w.nii.gz",
+    "status": 200,
+    "bytes": 49715106,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf24/anat/sub-olf24_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 27004134,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf24/anat/sub-olf24_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 30527119,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf25/anat/sub-olf25_T2w.nii.gz",
+    "status": 200,
+    "bytes": 68499569,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf25/anat/sub-olf25_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 31948601,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf25/anat/sub-olf25_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 34918965,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf26/anat/sub-olf26_T2w.nii.gz",
+    "status": 200,
+    "bytes": 54535231,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf26/anat/sub-olf26_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 23790075,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf26/anat/sub-olf26_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 28313576,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf27/anat/sub-olf27_T2w.nii.gz",
+    "status": 200,
+    "bytes": 54959472,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf27/anat/sub-olf27_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 27176812,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf27/anat/sub-olf27_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 30153801,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf28/anat/sub-olf28_T2w.nii.gz",
+    "status": 200,
+    "bytes": 66100370,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf28/anat/sub-olf28_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29348571,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf28/anat/sub-olf28_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 31684769,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf29/anat/sub-olf29_T2w.nii.gz",
+    "status": 200,
+    "bytes": 56461067,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf29/anat/sub-olf29_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 26471615,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf29/anat/sub-olf29_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29085874,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf30/anat/sub-olf30_T2w.nii.gz",
+    "status": 200,
+    "bytes": 53280720,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf30/anat/sub-olf30_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 28907064,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf30/anat/sub-olf30_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 32120404,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf31/anat/sub-olf31_T2w.nii.gz",
+    "status": 200,
+    "bytes": 59246149,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf31/anat/sub-olf31_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 28422327,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf31/anat/sub-olf31_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 31064301,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf32/anat/sub-olf32_T2w.nii.gz",
+    "status": 200,
+    "bytes": 53025240,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf32/anat/sub-olf32_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 25341713,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf32/anat/sub-olf32_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29050221,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf33/anat/sub-olf33_T2w.nii.gz",
+    "status": 200,
+    "bytes": 56493574,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf33/anat/sub-olf33_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 27943105,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf33/anat/sub-olf33_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 30955360,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf34/anat/sub-olf34_T2w.nii.gz",
+    "status": 200,
+    "bytes": 54838757,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf34/anat/sub-olf34_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 28243868,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf34/anat/sub-olf34_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 32642732,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf35/anat/sub-olf35_T2w.nii.gz",
+    "status": 200,
+    "bytes": 59070935,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf35/anat/sub-olf35_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 29102922,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf35/anat/sub-olf35_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 31274432,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf36/anat/sub-olf36_T2w.nii.gz",
+    "status": 200,
+    "bytes": 66836810,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf36/anat/sub-olf36_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 34185108,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf36/anat/sub-olf36_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 38918522,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf37/anat/sub-olf37_T2w.nii.gz",
+    "status": 200,
+    "bytes": 62621345,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf37/anat/sub-olf37_run-01_T1w.nii.gz",
+    "status": 200,
+    "bytes": 33733678,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://s3.amazonaws.com/openneuro.org/ds007345/sub-olf37/anat/sub-olf37_run-02_T1w.nii.gz",
+    "status": 200,
+    "bytes": 37670736,
+    "size_matches": true,
+    "accept_ranges": "bytes",
+    "content_type": "application/gzip"
+  },
+  {
+    "url": "https://zenodo.org/api/records/7153326/files/ISLES-2022.zip/content",
+    "status": 200,
+    "bytes": 1692717470,
+    "size_matches": true,
+    "accept_ranges": null,
+    "content_type": "application/octet-stream"
+  }
+]
