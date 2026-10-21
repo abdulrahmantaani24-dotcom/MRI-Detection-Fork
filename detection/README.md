@@ -35,3 +35,5 @@ downloads. No training is included. The helper's offline safety tests use artifi
 `python -m unittest -v detection.test_acquisition` from the repository root.
 After editing the helpers/catalog, refresh the embedded notebook with
 `python detection/sync_acquisition_notebook.py`; this performs no network or MRI I/O.
+
+ISLES duplicate FLAIR: use the notebook's **Revalidate existing ISLES without downloading or extracting** section rather than rerunning downloads. See [root cause, safeguards and exact Colab instructions](research/ISLES_VALIDATION_REVIEW.md). Exact duplicates require manual review and shared split groups; they are reported separately from file errors. Acquisition integrity never implies clinical/training approval. Run synthetic regression checks with `python -m unittest detection.test_acquisition detection.test_isles_duplicates -q`.

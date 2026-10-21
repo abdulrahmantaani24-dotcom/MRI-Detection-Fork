@@ -434,16 +434,157 @@ def inspect_dataset(root, dataset_id, disease, patient_map=None):
         g[{"image": "images", "mask": "masks"}.get(row["role"], "ancillary")].append(row["relative_path"])
     if any(not g["images"] for g in groups.values()):
         errors.append({"error": "Mask-only patient/case group found"})
+    # Exact file-byte equality is a review finding, not proof of corruption or identity.
     hashes = {}
     for row in rows:
-        if row["role"] == "image":
-            hashes.setdefault(row["sha256"], set()).add(row["patient_id"])
-    duplicates = [sorted(v) for v in hashes.values() if len(v) > 1]
+        if row["role"] == "image" and row["patient_id"]:
+            hashes.setdefault(row["sha256"], []).append(row)
+    duplicate_details = []
+    parents = {patient: patient for patient in groups}
+    def find(patient):
+        while parents[patient] != patient:
+            parents[patient] = parents[parents[patient]]
+            patient = parents[patient]
+        return patient
+    for sha, matches in sorted(hashes.items()):
+        patients = sorted({r["patient_id"] for r in matches})
+        if len(patients) < 2:
+            continue
+        duplicate_details.append({"sha256": sha, "patient_ids": patients,
+                                  "files": [{k: r[k] for k in ("relative_path", "case_id", "modalities")} for r in matches],
+                                  "review_status": "manual_review_required",
+                                  "evidence": "Exact file bytes only; patient identity is not established"})
+        for patient in patients[1:]:
+            parents[find(patient)] = find(patients[0])
+    components = {}
+    for patient in groups:
+        components.setdefault(find(patient), []).append(patient)
+    affected = set()
+    for patients in components.values():
+        patients.sort()
+        linked = len(patients) > 1
+        split_group = (dataset_id + ":duplicate-linked:" + hashlib.sha256("\n".join(patients).encode()).hexdigest()[:24]) if linked else patients[0]
+        for patient in patients:
+            groups[patient].update(split_group=split_group, manual_review_required=linked)
+        if linked:
+            affected.update(patients)
+    for row in rows:
+        if row["patient_id"] in groups:
+            row["split_group"] = groups[row["patient_id"]]["split_group"]
+            row["manual_review_required"] = row["patient_id"] in affected
+    duplicates = [d["patient_ids"] for d in duplicate_details]
     pending = [row["relative_path"] for row in rows if row["patient_id"] is None or row["diagnosis"] is None]
     return {"files": rows, "patients": list(groups.values()), "errors": errors,
             "pending_identity_files": pending, "mapping_required": bool(pending),
+            "exact_duplicate_images": duplicate_details, "manual_review_cases": sorted(affected),
             "exact_duplicate_image_groups": duplicates, "patient_count": None if any(row["patient_id"] is None for row in rows) else len(groups),
             "count_note": "MSD IDs are case groups; independent clinical identity is not proven. No cross-release deduplication is claimed."}
+
+
+def validate_split_assignments(manifest, assignments):
+    """Mandatory guard for any future split consumer; keys are original patient/case IDs.
+
+    Does not assign splits or merge patients. All cases must be explicitly assigned.
+    """
+    patients = {p["patient_id"]: p for p in manifest["patients"]}
+    if manifest["mapping_required"] or set(assignments) != set(patients):
+        raise ValueError("Complete resolved case assignments required")
+    groups = {}
+    for patient, split in assignments.items():
+        if split not in {"train", "validation", "test"}:
+            raise ValueError("Unknown split")
+        group = patients[patient]["split_group"]
+        if group in groups and groups[group] != split:
+            raise ValueError(f"Duplicate-linked cases cannot cross splits: {group}")
+        groups[group] = split
+    return True
+
+
+def manifest_failures(spec, manifest):
+    """Enumerate all hard failures, separately from duplicate review findings."""
+    failures = list(manifest["errors"])
+    expected = spec.get("expected_groups")
+    if expected and manifest["patient_count"] is not None and manifest["patient_count"] != expected:
+        failures.append({"error": f"Expected {expected} patient/case groups; found {manifest['patient_count']}"})
+    if manifest["mapping_required"]:
+        return failures
+    for diagnosis, count in spec.get("expected_diagnosis_groups", {}).items():
+        if sum(p["diagnosis"] == diagnosis for p in manifest["patients"]) != count:
+            failures.append({"error": f"Unexpected group count for {diagnosis}; expected {count}"})
+    if sum(r["role"] == "mask" for r in manifest["files"]) < spec.get("expected_min_masks", 0):
+        failures.append({"error": "Insufficient lesion masks"})
+    if spec["id"] == "isles2022":
+        for patient in manifest["patients"]:
+            channels = sorted((r["role"], tuple(r["modalities"])) for r in manifest["files"] if r["patient_id"] == patient["patient_id"])
+            expected_channels = sorted([("image", ("FLAIR",)), ("image", ("ADC",)), ("image", ("dwi",)), ("mask", ("mask",))])
+            if channels != expected_channels:
+                failures.append({"patient_id": patient["patient_id"], "error": "Expected exactly one FLAIR, ADC, DWI and mask", "actual": channels})
+    return failures
+
+
+def record_manifest(root, spec, manifest, report):
+    failures = manifest_failures(spec, manifest)
+    manifest["validation_failures"] = failures
+    atomic_json(root / "file_manifest.json", manifest)
+    atomic_json(root / "patient_manifest.json", manifest["patients"])
+    atomic_json(root / "duplicate_image_report.json", {"duplicates": manifest["exact_duplicate_images"],
+                "manual_review_cases": manifest["manual_review_cases"], "action": "Preserve all files and identities; keep every connected split_group together; manual review required"})
+    report.update(validation_failures=failures, file_inspection_errors=manifest["errors"],
+                  exact_duplicate_image_count=len(manifest["exact_duplicate_images"]),
+                  manual_review_cases=manifest["manual_review_cases"], training_ready=False,
+                  patient_or_case_groups=manifest["patient_count"])
+    if failures:
+        raise ValueError("Manifest validation failed; see validation_failures in file_manifest.json")
+    report["file_checks"] = "passed"
+
+
+def revalidate_existing_isles(spec, destination):
+    """Offline, read-only MRI/archive audit. Writes reports only; never downloads/extracts.
+
+    Compare every extracted member to the publisher-verified ZIP, including full ZIP CRC.
+    Missing archives/files fail closed. No assumption that header readability proves payload integrity.
+    """
+    root = assert_colab_drive(destination)
+    if spec["id"] != "isles2022":
+        raise ValueError("This offline revalidation entry point is ISLES-only")
+    report = {"dataset_id": spec["id"], "status": "running", "training_ready": False,
+              "mode": "existing_files_only", "archive_checks": "not_passed", "file_checks": "not_passed"}
+    try:
+        for asset in spec["assets"]:
+            archive = checked_path(root / "downloads", asset["path"])
+            algorithm, expected = asset["checksum"].split(":", 1)
+            if archive.stat().st_size != asset["bytes"] or digest(archive, algorithm) != expected:
+                raise ValueError("Existing archive publisher checksum/size mismatch; preserved without redownload")
+            seen = set()
+            with zipfile.ZipFile(archive) as container:
+                for member in container.infolist():
+                    mode = member.external_attr >> 16
+                    if stat.S_IFMT(mode) not in (0, stat.S_IFREG, stat.S_IFDIR) or member.flag_bits & 1:
+                        raise ValueError("Unsafe ZIP member")
+                    target = checked_path(root / "data", member.filename)
+                    key = str(target.resolve()).casefold()
+                    if key in seen:
+                        raise ValueError("Duplicate ZIP member path")
+                    seen.add(key)
+                    if member.is_dir():
+                        continue
+                    h = hashlib.sha256()
+                    with container.open(member) as source:
+                        for chunk in iter(lambda: source.read(4 * 1024**2), b""):
+                            h.update(chunk)  # Reading to EOF also verifies ZIP CRC.
+                    if target.stat().st_size != member.file_size or digest(target) != h.hexdigest():
+                        raise ValueError(f"Extracted file differs from verified archive: {member.filename}")
+        report["archive_checks"] = "passed_publisher_checksum_and_all_member_crc_and_extracted_bytes"
+        manifest = inspect_dataset(root / "data", spec["id"], spec["disease"])
+        record_manifest(root, spec, manifest, report)
+        report["status"] = "download_integrity_verified_review_required" if manifest["exact_duplicate_images"] else "acquired_and_inspected_not_approved_for_training"
+        report["clinical_readiness"] = "manual_review_required_not_approved_for_training"
+    except Exception as exc:
+        report.update(status="failed", error=f"{type(exc).__name__}: {exc}")
+        raise
+    finally:
+        atomic_json(root / "acquisition_report.json", report)
+    return report
 
 
 def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_bytes, patient_map_path=None):
@@ -452,7 +593,7 @@ def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_b
         raise RuntimeError(f"{spec['disease']}: acquisition disabled: {spec['reason']}")
     root.mkdir(parents=True, exist_ok=True)
     atomic_json(root / "source_and_license.json", spec)
-    report = {"dataset_id": spec["id"], "status": "running", "assets": [], "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    report = {"dataset_id": spec["id"], "status": "running", "training_ready": False, "assets": [], "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     try:
         known_total = sum(a.get("bytes") or 0 for a in spec["assets"])
         if known_total > download_budget_bytes:
@@ -482,8 +623,7 @@ def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_b
             assert_colab_drive(Path(patient_map_path).parent)
         patient_map = load_patient_map(patient_map_path) if patient_map_path else None
         manifest = inspect_dataset(data_root, spec["id"], spec["disease"], patient_map=patient_map)
-        atomic_json(root / "file_manifest.json", manifest)
-        atomic_json(root / "patient_manifest.json", manifest["patients"])
+        record_manifest(root, spec, manifest, report)
         if manifest["errors"]:
             raise ValueError("NIfTI/identity inspection failed; review file_manifest.json")
         expected = spec.get("expected_groups")
@@ -516,9 +656,8 @@ def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_b
         minimum_masks = spec.get("expected_min_masks", 0)
         if sum(row["role"] == "mask" for row in manifest["files"]) < minimum_masks:
             raise ValueError(f"Expected at least {minimum_masks} lesion masks")
-        if manifest["errors"] or manifest["exact_duplicate_image_groups"]:
-            raise ValueError("Manifest inspection failed; review file_manifest.json")
-        report["status"] = "acquired_and_inspected_not_approved_for_training"
+        report["archive_checks"] = "passed_download_checksums_and_safe_extraction"
+        report["status"] = "download_integrity_verified_review_required" if manifest["exact_duplicate_images"] else "acquired_and_inspected_not_approved_for_training"
         report["patient_or_case_groups"] = manifest["patient_count"]
     except Exception as exc:
         report["status"] = "failed"

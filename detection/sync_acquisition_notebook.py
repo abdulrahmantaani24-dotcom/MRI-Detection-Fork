@@ -157,6 +157,30 @@ if selected:
         print("Downloaded/inventoried, but patient/clinical review still pending:", pending)
 print("Acquisition stage ended. No models trained; verification and user approval remain prerequisites for training.")
 ''')
+# Add an independent offline rerun cell without disturbing existing setup cells.
+for cell_id, kind in [("isles-offline-help", "markdown"), ("isles-offline-revalidation", "code")]:
+    if cell_id not in by_id:
+        cell = {"id": cell_id, "cell_type": kind, "metadata": {}, "source": []}
+        if kind == "code":
+            cell.update(execution_count=None, outputs=[])
+        notebook["cells"].insert(next(i for i, c in enumerate(notebook["cells"]) if c["id"] == "review-gate"), cell)
+        by_id[cell_id] = cell
+replace('isles-offline-help', """## Revalidate existing ISLES without downloading or extracting
+
+For the reported duplicate FLAIR in sub-strokecase0090/sub-strokecase0169, keep every download switch False. Run setup/dependencies, mount Drive, configuration, embedded catalog and acquisition-engine cells; skip preflight and execute-acquisition. Enable only the switch below and run this cell. Use the same PROJECT_ROOT as the original acquisition. No GPU computation is needed for this CPU integrity audit.
+
+This requires the retained downloads/ISLES-2022.zip and data/ directory. It verifies pinned publisher MD5/size, full ZIP-member CRC, every extracted member's bytes, MRI headers/hashes, 250 case groups, and exactly one FLAIR/ADC/DWI/mask per case. It writes reports only; missing or altered files stop the audit without downloading, extracting, deleting or replacing MRI. Expect substantial Drive read I/O.
+
+Read acquisition_report.json, file_manifest.json, patient_manifest.json and duplicate_image_report.json under the ISLES dataset directory. validation_failures must be empty and archive_checks/file_checks must pass before integrity success is reported. Exact duplicate SHA256 findings are separate from file inspection errors. Both original cases and masks remain; all files of duplicate-linked cases share a conservative split_group, including transitive links. This does not assert a shared patient. Future split code must call validate_split_assignments(manifest, assignments) using original namespaced case IDs before exporting any splits. Clinical review and user approval remain pending even after integrity verification.
+""")
+replace('isles-offline-revalidation', """REVALIDATE_EXISTING_ISLES = False  # @param {type:"boolean"}
+if REVALIDATE_EXISTING_ISLES:
+    existing_isles_root = Path(ACQUISITION_ROOT) / CATALOG["post_stroke"]["id"]
+    isles_report = revalidate_existing_isles(CATALOG["post_stroke"], existing_isles_root)
+    print(json.dumps(isles_report, indent=2))
+else:
+    print("Existing ISLES audit disabled; no files read.")
+""")
 replace('review-gate', '''## Stop before training
 
 Review every private source/license record, acquisition report and file/patient manifest. For OASIS-2, finish the clinical-group join and exclude all converter visits from the binary AD/control cohort. For the larger meningioma source, resolve longitudinal patient IDs and source-specific control labels; the paper/supplement disagree about the control count. Missing masks or labels must not become healthy labels.
