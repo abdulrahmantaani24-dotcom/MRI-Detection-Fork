@@ -37,3 +37,5 @@ After editing the helpers/catalog, refresh the embedded notebook with
 `python detection/sync_acquisition_notebook.py`; this performs no network or MRI I/O.
 
 ISLES duplicate FLAIR: use the notebook's **Revalidate existing ISLES without downloading or extracting** section rather than rerunning downloads. See [root cause, safeguards and exact Colab instructions](research/ISLES_VALIDATION_REVIEW.md). Exact duplicates require manual review and shared split groups; they are reported separately from file errors. Acquisition integrity never implies clinical/training approval. Run synthetic regression checks with `python -m unittest detection.test_acquisition detection.test_isles_duplicates -q`.
+
+Drive storage checks use current user-confirmed free account quota, with independent real local-disk checks. See [storage reservation, headroom and exact Colab cell rerun order](research/COLAB_STORAGE_PREFLIGHT.md). Test with `python -m unittest detection.test_acquisition detection.test_isles_duplicates detection.test_storage -q`.

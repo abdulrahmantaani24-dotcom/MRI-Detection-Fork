@@ -58,10 +58,51 @@ def checked_path(root, relative):
     return target
 
 
-def require_space(root, needed, reserve=2 * 1024**3):
-    free = shutil.disk_usage(root).free
+def is_drive_path(root):
+    return Path(root).resolve().is_relative_to(Path("/content/drive").resolve())
+
+
+def storage_reservation(download_bytes, unpacked_bytes):
+    """Retained archives + extracted outputs coexist; reserve 10% or 5 GiB extra."""
+    if min(download_bytes, unpacked_bytes) < 0:
+        raise ValueError("Storage budgets must be nonnegative")
+    footprint = download_bytes + unpacked_bytes
+    return footprint + max(5 * 2**30, (footprint + 9) // 10)
+
+
+def require_space(root, needed, reserve=2 * 1024**3, *, drive_available_bytes=None):
+    if needed < 0 or reserve < 0:
+        raise ValueError("Storage requirements must be nonnegative")
+    if is_drive_path(root):
+        # DriveFS statvfs may expose a local/cache capacity, not account quota.
+        if drive_available_bytes is None or drive_available_bytes <= 0:
+            raise ValueError("A current user-confirmed Google Drive free quota is required")
+        free = drive_available_bytes
+        source = "user-confirmed Google Drive quota"
+    else:
+        free = shutil.disk_usage(root).free
+        source = "local filesystem"
     if free < needed + reserve:
-        raise OSError(f"Insufficient filesystem space: need {needed + reserve:,} bytes; free {free:,}")
+        raise OSError(f"Insufficient {source} space: need {needed + reserve:,} bytes; free {free:,}")
+
+
+def check_storage_plan(root, download_bytes, unpacked_bytes, *, drive_available_bytes, local_root=None, local_staging_bytes=0):
+    """Explicit separate accounting. Streaming acquisition stages no MRI on local disk.
+
+    Any future local staging must declare its simultaneous peak bytes here.
+    The local reserve also leaves room for runtime/cache overhead; DriveFS may still
+    fail writes for provider/cache limits, which must propagate as acquisition failures.
+    """
+    reservation = storage_reservation(download_bytes, unpacked_bytes)
+    require_space(root, reservation, reserve=0, drive_available_bytes=drive_available_bytes)
+    if local_root is not None:
+        if is_drive_path(local_root):
+            raise ValueError("Local storage check must target real Colab local disk")
+        require_space(local_root, local_staging_bytes)
+    return {"reserved_bytes": reservation, "download_bytes": download_bytes,
+            "unpacked_budget_bytes": unpacked_bytes, "headroom_bytes": reservation - download_bytes - unpacked_bytes,
+            "drive_available_bytes": drive_available_bytes, "local_staging_bytes": local_staging_bytes,
+            "local_runtime_reserve_bytes": 2 * 2**30 if local_root is not None else 0}
 
 
 def assert_colab_drive(root):
@@ -126,7 +167,7 @@ def record_oasis_integrity(part, ledger_path, asset):
                              "limitation": "Local SHA-256 is a repeat-use integrity baseline, not a publisher hash comparison"})
 
 
-def download_verified(asset, root, *, max_bytes):
+def download_verified(asset, root, *, max_bytes, drive_available_bytes=None):
     """Resume only with a server validator and matching Content-Range; never trust ETag as MD5."""
     target = checked_path(root, asset["path"])
     checksum = asset.get("checksum")
@@ -202,7 +243,7 @@ def download_verified(asset, root, *, max_bytes):
         limit = expected_size or total or max_bytes
         if limit > max_bytes:
             raise OSError("Asset exceeds the configured download budget")
-        require_space(root, max(0, limit - offset))
+        require_space(root, max(0, limit - offset), drive_available_bytes=drive_available_bytes)
         etag = response.headers.get("ETag", "")
         validator = etag if etag and not etag.startswith("W/") else response.headers.get("Last-Modified")
         atomic_json(state_path, {"url": asset["url"], "validator": validator, "total": total})
@@ -226,7 +267,7 @@ def download_verified(asset, root, *, max_bytes):
             "integrity_policy": asset.get("integrity_policy", "publisher_checksum"), "status": "verified"}
 
 
-def safe_extract(archive, destination, *, max_unpacked_bytes):
+def safe_extract(archive, destination, *, max_unpacked_bytes, drive_available_bytes=None):
     """Preflight all members; reject links, devices, traversal, duplicates and archive bombs."""
     archive, destination = Path(archive), Path(destination)
     destination.mkdir(parents=True, exist_ok=True)
@@ -264,7 +305,7 @@ def safe_extract(archive, destination, *, max_unpacked_bytes):
             total += size
             if total > max_unpacked_bytes:
                 raise OSError("Archive exceeds extraction budget")
-        require_space(destination, total)
+        require_space(destination, total, drive_available_bytes=drive_available_bytes)
         for name, size, is_dir, member in records:
             if name.rstrip("/") in (".", "") and is_dir:
                 continue
@@ -587,7 +628,7 @@ def revalidate_existing_isles(spec, destination):
     return report
 
 
-def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_bytes, patient_map_path=None):
+def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_bytes, patient_map_path=None, drive_available_bytes=None):
     root = assert_colab_drive(destination)
     if not spec.get("eligible"):
         raise RuntimeError(f"{spec['disease']}: acquisition disabled: {spec['reason']}")
@@ -598,16 +639,21 @@ def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_b
         known_total = sum(a.get("bytes") or 0 for a in spec["assets"])
         if known_total > download_budget_bytes:
             raise OSError("Selected assets exceed the total download budget")
-        require_space(root, known_total)
+        if is_drive_path(root):
+            report["storage_plan"] = check_storage_plan(root, known_total,
+                extraction_budget_bytes if any(a.get("archive") for a in spec["assets"]) else 0,
+                drive_available_bytes=drive_available_bytes, local_root="/content")
+        else:
+            require_space(root, known_total)
         used = 0
         unpacked = 0
         for asset in spec["assets"]:
-            result = download_verified(asset, root / "downloads", max_bytes=download_budget_bytes - used)
+            result = download_verified(asset, root / "downloads", max_bytes=download_budget_bytes - used, drive_available_bytes=drive_available_bytes)
             report["assets"].append(result)
             used += Path(result["path"]).stat().st_size
             if asset.get("archive"):
                 data_destination = checked_path(root / "data", asset["extract_subdir"]) if asset.get("extract_subdir") else root / "data"
-                extraction = safe_extract(result["path"], data_destination, max_unpacked_bytes=extraction_budget_bytes - unpacked)
+                extraction = safe_extract(result["path"], data_destination, max_unpacked_bytes=extraction_budget_bytes - unpacked, drive_available_bytes=drive_available_bytes)
                 unpacked += extraction["unpacked_bytes"]
                 report.setdefault("extraction", []).append(extraction)
         data_root = root / ("data" if any(a.get("archive") for a in spec["assets"]) else "downloads")

@@ -43,7 +43,7 @@ replace('download-configuration-help', '''## Select diseases, meningioma source 
 
 All transfers go to private `Drive/datasets/DiseaseAcquisition/<dataset_id>/`. Different existing data are never overwritten. Archives remain on Drive, so reserve space for both compressed and extracted data. HTTP Range/If-Range enables resume where supported.
 
-**Drive quota is not reliably reported by `shutil.disk_usage`.** Enter the free space shown in Google Drive as `DRIVE_AVAILABLE_GIB`. Zero blocks transfers. Filesystem free space is also checked. `MAX_UNPACKED_GIB_PER_DISEASE` is one shared extraction budget across a disease's archives, not multiplied by PROTEAS's 45 course archives.
+**Drive quota is not reliably reported by `shutil.disk_usage`.** Enter the free space shown in Google Drive as `DRIVE_AVAILABLE_GIB`. Zero blocks transfers. Mounted Drive filesystem capacity is not used as account quota. Real local Colab disk is checked separately with a 2 GiB runtime/cache reserve; MRI archives and extraction stream directly to Drive without local staging. `MAX_UNPACKED_GIB_PER_DISEASE` is one shared extraction budget across a disease's archives, not multiplied by PROTEAS's 45 course archives.
 
 For the larger meningioma source and OASIS-2, the first run may end with `download_verified_inventory_pending_patient_map`. This is an explicit review state, not a successful clinical-label validation. Headers, hashes and known identities are inventoried, while missing identities/diagnoses stay null. A private `patient_map_template.csv` is generated. Use verified source metadata and review to fill a **separate** CSV, enter its Drive path below, then rerun. Never invent new patients from scan counts or infer a control label from an absent mask.
 
@@ -72,7 +72,7 @@ replace('dataset-catalog', 'import json\nCATALOG = json.loads(' + repr(json.dump
 replace('acquisition-engine', (ROOT / 'acquisition.py').read_text())
 replace('preflight-help', '''## Preflight without MRI transfer
 
-HEAD requests check all selected endpoints, current byte sizes and available storage. A missing Drive mount, login/error page, changed size or insufficient budget stops preflight before MRI transfer. Publisher digests remain pinned; multipart ETags are not MD5.
+HEAD requests check all selected endpoints, current byte sizes and available storage. Drive quota uses your current confirmed free quota, never mounted Drive statvfs. Reservation includes all retained downloads plus each archived disease’s shared extraction budget, plus the greater of 5 GiB or 10% headroom. Real /content free space is checked separately (2 GiB reserve, no MRI staging). Provider/cache write failures still stop acquisition and preserve partial files; this is not a guarantee of DriveFS cache behavior. A missing Drive mount, login/error page, changed size or insufficient budget stops preflight before MRI transfer. Publisher digests remain pinned; multipart ETags are not MD5.
 
 OASIS-2 is a separately disclosed legacy policy: authenticated HTTPS + exact byte size + full gzip CRC32, with a local SHA-256 ledger for repeat verification. It has no publisher cryptographic digest. Other sources still require their published MD5/SHA-256; this policy does not bypass a known checksum mismatch.
 ''')
@@ -109,15 +109,15 @@ else:
             probes[spec["id"]] = probe_assets(spec)
         total_download = sum(asset["bytes"] for spec in selected for asset in spec["assets"])
         archive_diseases = sum(any(asset.get("archive") for asset in spec["assets"]) for spec in selected)
-        reserve = total_download + int(archive_diseases * MAX_UNPACKED_GIB_PER_DISEASE * 2**30) + 2 * 2**30
-        if reserve > DRIVE_AVAILABLE_GIB * 2**30:
-            raise OSError(f"Conservative storage reservation is {reserve / 2**30:.2f} GiB; available quota is lower.")
+        storage_plan = check_storage_plan(acquisition_root, total_download,
+            int(archive_diseases * MAX_UNPACKED_GIB_PER_DISEASE * 2**30),
+            drive_available_bytes=int(DRIVE_AVAILABLE_GIB * 2**30), local_root="/content")
+        reserve = storage_plan["reserved_bytes"]
         for spec in selected:
             if sum(asset["bytes"] for asset in spec["assets"]) > MAX_DOWNLOAD_GIB_PER_DISEASE * 2**30:
                 raise OSError(f"{spec['id']} exceeds the per-disease download budget.")
-        require_space(acquisition_root, reserve - 2 * 2**30)
         preflight_ok = True
-        atomic_json(acquisition_root / "preflight_report.json", {"status": "passed", "probes": probes, "reserved_bytes": reserve})
+        atomic_json(acquisition_root / "preflight_report.json", {"status": "passed", "probes": probes, "reserved_bytes": reserve, "storage_plan": storage_plan})
         print(f"Preflight passed: {total_download / 2**30:.2f} GiB download; reserve {reserve / 2**30:.2f} GiB including shared extraction budgets.")
     except Exception as exc:
         atomic_json(acquisition_root / "preflight_report.json", {"status": "failed", "probes": probes, "error": f"{type(exc).__name__}: {exc}"})
@@ -139,7 +139,8 @@ for spec in selected:
         result = acquire_one(spec, str(Path(ACQUISITION_ROOT) / spec["id"]),
                              download_budget_bytes=int(MAX_DOWNLOAD_GIB_PER_DISEASE * 2**30),
                              extraction_budget_bytes=int(MAX_UNPACKED_GIB_PER_DISEASE * 2**30),
-                             patient_map_path=reviewed_maps.get(spec["id"]) or None)
+                             patient_map_path=reviewed_maps.get(spec["id"]) or None,
+                             drive_available_bytes=int(DRIVE_AVAILABLE_GIB * 2**30))
         results.append(result)
         print(spec["id"], result["status"], result.get("patient_or_case_groups"))
         if result.get("mapping_template"):
