@@ -41,7 +41,7 @@ The full report with source comparisons, citations, exact links, count semantics
 ''')
 replace('download-configuration-help', '''## Select diseases, meningioma source and storage budgets
 
-All transfers go to private `Drive/datasets/DiseaseAcquisition/<dataset_id>/`. Different existing data are never overwritten. Archives remain on Drive, so reserve space for both compressed and extracted data. HTTP Range/If-Range enables resume where supported.
+All transfers go to private `Drive/datasets/DiseaseAcquisition/<dataset_id>/`. Different existing data are never overwritten. Archives remain on Drive, so reserve space for both compressed and extracted data. HTTP Range/If-Range enables resume where supported. Hwang transfers use configurable bounded chunks, connection/read timeouts, retries and progress/sync intervals below. Orphan resume metadata without partial bytes starts a fresh transfer explicitly; an actual partial without a trusted server validator is preserved and stops. A server that ignores Range never triggers an automatic destructive restart. See `detection/research/MENINGIOMA_INTERRUPTED_DOWNLOAD.md` for diagnosis and rerun instructions.
 
 **Drive quota is not reliably reported by `shutil.disk_usage`.** Enter the free space shown in Google Drive as `DRIVE_AVAILABLE_GIB`. Zero blocks transfers. Mounted Drive filesystem capacity is not used as account quota. Real local Colab disk is checked separately with a 2 GiB runtime/cache reserve; MRI archives and extraction stream directly to Drive without local staging. `MAX_UNPACKED_GIB_PER_DISEASE` is one shared extraction budget across a disease's archives, not multiplied by PROTEAS's 45 course archives.
 
@@ -57,6 +57,16 @@ DOWNLOAD_POST_STROKE = False  # @param {type:"boolean"}
 MENINGIOMA_SOURCE = "hwang91"  # @param ["hwang91", "openneuro37"]
 MENINGIOMA_REVIEWED_MAP_CSV = ""  # @param {type:"string"}
 OASIS2_REVIEWED_MAP_CSV = ""  # @param {type:"string"}
+DOWNLOAD_CONNECT_TIMEOUT_SECONDS = 30  # @param {type:"number"}
+DOWNLOAD_READ_TIMEOUT_SECONDS = 60  # @param {type:"number"}
+DOWNLOAD_MAX_RETRIES = 2  # @param {type:"integer"}
+DOWNLOAD_CHUNK_MIB = 1  # @param {type:"integer"}
+DOWNLOAD_PROGRESS_SECONDS = 10  # @param {type:"number"}
+DOWNLOAD_SYNC_SECONDS = 5  # @param {type:"number"}
+DOWNLOAD_OPTIONS = dict(connect_timeout=DOWNLOAD_CONNECT_TIMEOUT_SECONDS,
+    read_timeout=DOWNLOAD_READ_TIMEOUT_SECONDS, max_retries=DOWNLOAD_MAX_RETRIES,
+    chunk_bytes=int(DOWNLOAD_CHUNK_MIB * 2**20), progress_interval=DOWNLOAD_PROGRESS_SECONDS,
+    sync_interval=DOWNLOAD_SYNC_SECONDS)
 DRIVE_AVAILABLE_GIB = 0.0  # @param {type:"number"}
 MAX_DOWNLOAD_GIB_PER_DISEASE = 25.0  # @param {type:"number"}
 MAX_UNPACKED_GIB_PER_DISEASE = 60.0  # @param {type:"number"}
@@ -140,7 +150,8 @@ for spec in selected:
                              download_budget_bytes=int(MAX_DOWNLOAD_GIB_PER_DISEASE * 2**30),
                              extraction_budget_bytes=int(MAX_UNPACKED_GIB_PER_DISEASE * 2**30),
                              patient_map_path=reviewed_maps.get(spec["id"]) or None,
-                             drive_available_bytes=int(DRIVE_AVAILABLE_GIB * 2**30))
+                             drive_available_bytes=int(DRIVE_AVAILABLE_GIB * 2**30),
+                             download_options=DOWNLOAD_OPTIONS if spec["id"] == "hwang_meningioma_5945963" else None)
         results.append(result)
         print(spec["id"], result["status"], result.get("patient_or_case_groups"))
         if result.get("mapping_template"):

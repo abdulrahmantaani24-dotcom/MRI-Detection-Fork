@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import csv
+import http.client
 import hashlib
 import gzip
 import json
@@ -124,8 +125,15 @@ def assert_colab_drive(root):
 def _request(url, **kwargs):
     if not url.startswith("https://"):
         raise ValueError("Only verified HTTPS sources are allowed.")
+    connect_timeout = kwargs.pop("connect_timeout", 30)
+    read_timeout = kwargs.pop("read_timeout", 60)
     req = urllib.request.Request(url, headers={"User-Agent": "NeuroScope-Acquisition/1.0", "Accept-Encoding": "identity", **kwargs.pop("headers", {})}, **kwargs)
-    response = urllib.request.urlopen(req, timeout=90)
+    response = urllib.request.urlopen(req, timeout=connect_timeout)
+    try:
+        response.fp.raw._sock.settimeout(read_timeout)
+    except AttributeError:
+        response.close()
+        raise RuntimeError("Cannot configure HTTP socket read timeout")
     if not response.url.startswith("https://"):
         response.close()
         raise ValueError("Refusing a redirect that downgrades HTTPS.")
@@ -167,7 +175,9 @@ def record_oasis_integrity(part, ledger_path, asset):
                              "limitation": "Local SHA-256 is a repeat-use integrity baseline, not a publisher hash comparison"})
 
 
-def download_verified(asset, root, *, max_bytes, drive_available_bytes=None):
+def _download_attempt(asset, root, *, max_bytes, drive_available_bytes=None,
+                      connect_timeout=30, read_timeout=60, chunk_bytes=1024**2,
+                      progress_interval=10, sync_interval=5, progress=None):
     """Resume only with a server validator and matching Content-Range; never trust ETag as MD5."""
     target = checked_path(root, asset["path"])
     checksum = asset.get("checksum")
@@ -199,11 +209,22 @@ def download_verified(asset, root, *, max_bytes, drive_available_bytes=None):
     target.parent.mkdir(parents=True, exist_ok=True)
     part = target.with_name(target.name + ".part")
     state_path = target.with_name(target.name + ".resume.json")
+    if part.is_symlink() or state_path.is_symlink():
+        raise ValueError("Refusing partial/resume metadata symlink")
     if expected is not None and part.exists() and (expected_size is None or part.stat().st_size == expected_size) and digest(part, algorithm) == expected:
         part.replace(target)
         state_path.unlink(missing_ok=True)
         return {"path": str(target), "sha256": digest(target), "status": "verified_completed_partial"}
-    state = json.loads(state_path.read_text()) if state_path.exists() else {}
+    try:
+        state = json.loads(state_path.read_text()) if state_path.exists() else {}
+    except (ValueError, TypeError):
+        state = {}  # An actual partial without valid metadata remains protected below.
+    if not isinstance(state, dict):
+        state = {}
+    if state and not part.exists():
+        print(f"{asset['path']}: stale resume metadata without partial bytes; starting a fresh transfer", flush=True)
+    if state.get("total") not in (None, expected_size):
+        state = {}
     headers = {}
     offset = part.stat().st_size if part.exists() else 0
     if legacy_oasis and offset == expected_size and state.get("url") == asset["url"]:
@@ -213,11 +234,13 @@ def download_verified(asset, root, *, max_bytes, drive_available_bytes=None):
         return {"path": str(target), "sha256": digest(target), "publisher_checksum": None,
                 "integrity_policy": asset["integrity_policy"], "status": "verified_completed_partial"}
     validator = state.get("validator") if state.get("url") == asset["url"] else None
+    if not isinstance(validator, str) or not validator or validator.startswith("W/"):
+        validator = None
     if offset and validator:
         headers = {"Range": f"bytes={offset}-", "If-Range": validator}
     elif offset:
         raise RuntimeError(f"Partial file has no trusted resume validator; preserve it and inspect: {part}")
-    with _request(asset["url"], headers=headers) as response:
+    with _request(asset["url"], headers=headers, connect_timeout=connect_timeout, read_timeout=read_timeout) as response:
         if response.status not in (200, 206):
             raise RuntimeError(f"Unexpected HTTP status {response.status}")
         if any(x in response.headers.get("Content-Type", "").lower() for x in ["text/html", "application/json"]):
@@ -228,11 +251,20 @@ def download_verified(asset, root, *, max_bytes, drive_available_bytes=None):
             if not match or int(match[1]) != offset:
                 raise RuntimeError("Server returned an invalid resume Content-Range")
             total = int(match[3])
+            if int(match[2]) != total - 1 or int(match[2]) < offset:
+                raise RuntimeError("Server returned an invalid resume Content-Range end")
+            response_validator = response.headers.get("ETag") if not validator.startswith('W/') and validator.startswith('"') else response.headers.get("Last-Modified")
+            if response_validator and response_validator != validator:
+                raise RuntimeError("Resume validator changed; partial preserved")
+            if response.headers.get("Content-Length") and int(response.headers["Content-Length"]) != total - offset:
+                raise RuntimeError("Resume response length does not match Content-Range")
             mode = "ab"
         else:
             if response.status == 206:
                 raise RuntimeError("Unexpected partial response for a fresh download")
-            # If-Range mismatch/server ignores Range: explicitly restart the partial file.
+            if offset:
+                raise RuntimeError("Server ignored Range or changed validator; reliable resume unavailable. Partial preserved; explicit restart review required")
+            # A fresh request may start only when there are no existing partial bytes.
             offset = 0
             mode = "wb"
             total = int(response.headers["Content-Length"]) if response.headers.get("Content-Length") else None
@@ -248,15 +280,47 @@ def download_verified(asset, root, *, max_bytes, drive_available_bytes=None):
         validator = etag if etag and not etag.startswith("W/") else response.headers.get("Last-Modified")
         atomic_json(state_path, {"url": asset["url"], "validator": validator, "total": total})
         count = offset
-        with part.open(mode) as stream:
-            for chunk in iter(lambda: response.read(4 * 1024**2), b""):
-                count += len(chunk)
-                if count > limit:
-                    raise OSError("Download exceeded expected size/budget")
-                stream.write(chunk)
+        if progress:
+            progress(count, "streaming", resumable=bool(validator))
+        if not validator:
+            print(f"{asset['path']}: server supplied no strong ETag/Last-Modified; reliable interrupted resume is unavailable", flush=True)
+        last_sync = last_progress = time.monotonic()
+        first = True
+        # Unbuffered writes reach DriveFS immediately. fsync requests persistence;
+        # remote durability still depends on DriveFS and the connected runtime.
+        with part.open(mode, buffering=0) as stream:
+            try:
+                reader = getattr(response, "read1", response.read)
+                while True:
+                    chunk = reader(chunk_bytes)
+                    if not chunk:
+                        break
+                    if count + len(chunk) > limit:
+                        raise OSError("Download exceeded expected size/budget")
+                    view = memoryview(chunk)
+                    while view:
+                        written = stream.write(view)
+                        if not written:
+                            raise OSError("Partial file write made no progress")
+                        view = view[written:]
+                        count += written
+                    now = time.monotonic()
+                    if first or now - last_sync >= sync_interval:
+                        os.fsync(stream.fileno())
+                        last_sync = now
+                        first = False
+                    if progress and now - last_progress >= progress_interval:
+                        progress(count, "streaming", resumable=bool(validator))
+                        last_progress = now
+            finally:
+                os.fsync(stream.fileno())
+                if progress:
+                    progress(count, "stream_closed", resumable=bool(validator))
         for size in (total, expected_size):
             if size is not None and count != size:
                 raise ValueError(f"Incomplete download: {count} != {size}")
+    if progress:
+        progress(count, "verifying_checksum")
     if expected is not None and digest(part, algorithm) != expected:
         raise ValueError(f"Publisher {algorithm} mismatch; file kept as .part for investigation")
     if legacy_oasis:
@@ -265,6 +329,69 @@ def download_verified(asset, root, *, max_bytes, drive_available_bytes=None):
     state_path.unlink(missing_ok=True)
     return {"path": str(target), "bytes": count, "publisher_checksum": checksum, "sha256": digest(target),
             "integrity_policy": asset.get("integrity_policy", "publisher_checksum"), "status": "verified"}
+
+
+def download_verified(asset, root, *, max_bytes, drive_available_bytes=None,
+                      connect_timeout=30, read_timeout=60, chunk_bytes=1024**2,
+                      progress_interval=10, sync_interval=5, max_retries=2):
+    """Bounded-memory Drive streaming; retry only transient transport/server failures.
+
+    No unsafe restart: partials without validators and ignored Range fail closed.
+    Status is informational only, never a completion/checksum authority.
+    """
+    if min(connect_timeout, read_timeout, progress_interval, sync_interval) <= 0 or not 1 <= chunk_bytes <= 4 * 1024**2 or not 0 <= max_retries <= 5:
+        raise ValueError("Invalid transfer options (chunk <=4 MiB, retries 0..5, positive timeouts/intervals)")
+    target = checked_path(root, asset["path"])
+    target.parent.mkdir(parents=True, exist_ok=True)
+    status_path = target.with_name(target.name + ".download_status.json")
+    part = target.with_name(target.name + ".part")
+    started = time.monotonic()
+    initial_bytes = part.stat().st_size if part.exists() else 0
+    attempt = 0
+    def progress(count, status, **extra):
+        report = {"status": status, "bytes_saved": count, "bytes_transferred_this_run": max(0, count - initial_bytes),
+                  "expected_total": asset.get("bytes"), "elapsed_seconds": round(time.monotonic() - started, 2),
+                  "attempt": attempt + 1, "url": asset["url"], **extra}
+        # Replace our own small status snapshot, without accumulating progress backups.
+        temporary = status_path.with_name(status_path.name + ".updating")
+        if status_path.is_symlink() or temporary.is_symlink():
+            raise ValueError("Unsafe download status path")
+        with temporary.open("w") as stream:
+            json.dump(report, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+        temporary.replace(status_path)
+        print(f"{asset['path']}: {status}; {count:,}/{asset.get('bytes')} bytes; {report['elapsed_seconds']}s; attempt {attempt + 1}", flush=True)
+    for attempt in range(max_retries + 1):
+        progress(part.stat().st_size if part.exists() else 0, "connecting")
+        try:
+            result = _download_attempt(asset, root, max_bytes=max_bytes, drive_available_bytes=drive_available_bytes,
+                connect_timeout=connect_timeout, read_timeout=read_timeout, chunk_bytes=chunk_bytes,
+                progress_interval=progress_interval, sync_interval=sync_interval, progress=progress)
+            progress(target.stat().st_size, result["status"])
+            return result
+        except Exception as exc:
+            transient = isinstance(exc, (TimeoutError, ConnectionError, http.client.IncompleteRead, urllib.error.URLError))
+            if isinstance(exc, urllib.error.HTTPError):
+                transient = exc.code in {408, 429, 500, 502, 503, 504}
+            if isinstance(exc, ValueError) and str(exc).startswith("Incomplete download:"):
+                transient = True
+            progress(part.stat().st_size if part.exists() else 0, "interrupted" if transient else "failed",
+                     error=f"{type(exc).__name__}: {exc}")
+            if part.exists() and part.stat().st_size:
+                resume_path = target.with_name(target.name + ".resume.json")
+                try:
+                    resume_state = json.loads(resume_path.read_text())
+                except (OSError, ValueError):
+                    resume_state = {}
+                if not resume_state.get("validator"):
+                    progress(part.stat().st_size, "resume_unavailable", error=f"{type(exc).__name__}: {exc}",
+                             action="Partial preserved; server supplied no reliable validator. Review before explicit fresh restart")
+                    raise
+            if not transient or attempt == max_retries:
+                raise
+            time.sleep(min(2**attempt, 4))
+    raise AssertionError("Unreachable")
 
 
 def safe_extract(archive, destination, *, max_unpacked_bytes, drive_available_bytes=None):
@@ -628,7 +755,7 @@ def revalidate_existing_isles(spec, destination):
     return report
 
 
-def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_bytes, patient_map_path=None, drive_available_bytes=None):
+def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_bytes, patient_map_path=None, drive_available_bytes=None, download_options=None):
     root = assert_colab_drive(destination)
     if not spec.get("eligible"):
         raise RuntimeError(f"{spec['disease']}: acquisition disabled: {spec['reason']}")
@@ -648,7 +775,7 @@ def acquire_one(spec, destination, *, download_budget_bytes, extraction_budget_b
         used = 0
         unpacked = 0
         for asset in spec["assets"]:
-            result = download_verified(asset, root / "downloads", max_bytes=download_budget_bytes - used, drive_available_bytes=drive_available_bytes)
+            result = download_verified(asset, root / "downloads", max_bytes=download_budget_bytes - used, drive_available_bytes=drive_available_bytes, **(download_options or {}))
             report["assets"].append(result)
             used += Path(result["path"]).stat().st_size
             if asset.get("archive"):

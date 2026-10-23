@@ -42,12 +42,13 @@ class AcquisitionSafety(unittest.TestCase):
             self.assertEqual(request.call_args.kwargs["headers"]["Range"], "bytes=5-")
         self.assertEqual((self.root / "test.bin").read_bytes(), self.payload)
 
-    def test_server_ignoring_range_restarts_partial(self):
+    def test_server_ignoring_range_preserves_partial(self):
         (self.root / "test.bin.part").write_bytes(b"stale")
         a.atomic_json(self.root / "test.bin.resume.json", {"url": self.asset["url"], "validator": '"old"'})
         with patch.object(a, "_request", return_value=Response(self.payload)):
-            a.download_verified(self.asset, self.root, max_bytes=100)
-        self.assertEqual((self.root / "test.bin").read_bytes(), self.payload)
+            with self.assertRaisesRegex(RuntimeError, "reliable resume unavailable"):
+                a.download_verified(self.asset, self.root, max_bytes=100)
+        self.assertEqual((self.root / "test.bin.part").read_bytes(), b"stale")
 
     def test_bad_range_preserves_partial(self):
         (self.root / "test.bin.part").write_bytes(b"abc")
@@ -72,7 +73,7 @@ class AcquisitionSafety(unittest.TestCase):
     def test_truncated_payload_rejected(self):
         with patch.object(a, "_request", return_value=Response(self.payload[:-2], headers={"Content-Length": str(len(self.payload))})):
             with self.assertRaises(ValueError):
-                a.download_verified(self.asset, self.root, max_bytes=100)
+                a.download_verified(self.asset, self.root, max_bytes=100, max_retries=0)
 
     def test_budget_enforced(self):
         with patch.object(a, "_request", return_value=Response(self.payload)):
