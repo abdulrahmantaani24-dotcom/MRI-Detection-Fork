@@ -17,3 +17,27 @@ For a CPU-only check in an environment with the dependencies already installed, 
 The existing workflow stays at the repository root: `segmentation_baseline.py`, `monai_preprocessing_pipeline.py`, `finetune_segresnet.py`, `generate_segmentation_visualizations.py`, `test_segmentation_readiness.py`, `run_smoke_test.py`, and `verify_model_training_7checks.py`. Its Colab notebook is `notebooks/NeuroScope_Glioma_FineTuning_Colab.ipynb`; associated weights and results are in `models/`, `reports/`, and `outputs/`. The existing `detection_experiment.py` is also left unchanged.
 
 Keep datasets and checkpoints outside the Git checkout, in private Drive storage. Do not commit patient data, weights, credentials, or sensitive notebook outputs. Clear outputs before committing the notebook. This setup requires no upstream changes.
+
+## Disease dataset acquisition
+
+Use [Acquire_Best_5_Disease_Datasets.ipynb](notebooks/Acquire_Best_5_Disease_Datasets.ipynb)
+for opt-in, checksum-verified acquisition into private Google Drive **from Colab only**.
+It reuses this setup notebook's runtime/dependency/Drive cells. All five disease switches
+default off. The updated choices include PROTEAS brain metastasis, a larger 91-patient
+meningioma cohort, and official legacy OASIS-2; the original 37-patient meningioma option
+is retained. Download readiness is separate from clinical-label readiness: the larger
+meningioma and OASIS-2 choices need reviewed mapping, and OASIS-2 has no publisher
+cryptographic digest (its explicit policy uses HTTPS/size/gzip CRC32 and a local SHA-256
+ledger). Existing IXI files are not scanned or changed.
+
+Read the [dataset comparison and evidence](research/DATASET_SELECTION.md) before selecting
+downloads. No training is included. The helper's offline safety tests use artificial data:
+`python -m unittest -v detection.test_acquisition` from the repository root.
+After editing the helpers/catalog, refresh the embedded notebook with
+`python detection/sync_acquisition_notebook.py`; this performs no network or MRI I/O.
+
+ISLES duplicate FLAIR: use the notebook's **Revalidate existing ISLES without downloading or extracting** section rather than rerunning downloads. See [root cause, safeguards and exact Colab instructions](research/ISLES_VALIDATION_REVIEW.md). Exact duplicates require manual review and shared split groups; they are reported separately from file errors. Acquisition integrity never implies clinical/training approval. Run synthetic regression checks with `python -m unittest detection.test_acquisition detection.test_isles_duplicates -q`.
+
+Drive storage checks use current user-confirmed free account quota, with independent real local-disk checks. See [storage reservation, headroom and exact Colab cell rerun order](research/COLAB_STORAGE_PREFLIGHT.md). Test with `python -m unittest detection.test_acquisition detection.test_isles_duplicates detection.test_storage -q`.
+
+For stalled/interrupted Hwang transfers, see [findings, streaming/resume policy and exact rerun instructions](research/MENINGIOMA_INTERRUPTED_DOWNLOAD.md). Progress snapshots are informational, never integrity evidence. Additional synthetic tests: `python -m unittest detection.test_streaming -q`.
