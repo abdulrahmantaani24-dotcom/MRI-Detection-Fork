@@ -30,3 +30,13 @@ models/*
 # Heavy local model outputs (keep code and metrics, exclude heavy 3D masks)
 outputs/**/*.nii.gz
 outputs/**/*.nii
+
+# Phase 2 private audit artifacts (never commit real reports or patient metadata)
+/reports/detection_readiness/
+**/readiness_cache.sqlite*
+**/Detection_Dataset_Readiness_Report.md
+**/Detection_Dataset_Summary.csv
+**/Detection_Label_Review_Required.csv
+**/Detection_Modality_Compatibility.csv
+**/Detection_Validation_Errors.json
+**/Detection_Training_Readiness.json
